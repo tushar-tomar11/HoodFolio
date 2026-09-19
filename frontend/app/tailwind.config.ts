@@ -147,6 +147,7 @@ export default {
     './src/layouts/**/*.vue',
     './src/modules/**/*.vue',
     './src/pages/**/*.vue',
+    './src/views/**/*.vue',
     './src/**/*.ts',
   ],
   theme: {
@@ -160,6 +161,30 @@ export default {
       colors: {
         'dark-surface': '#121212',
         'dark-elevated': '#1E1E1E',
+        'hf': {
+          'green': 'var(--hf-green)',
+          'red': 'var(--hf-red)',
+          'amber': 'var(--hf-amber)',
+          'blue': 'var(--hf-blue)',
+          'ink': 'var(--hf-ink)',
+          'ink-2': 'var(--hf-ink-2)',
+          'ink-3': 'var(--hf-ink-3)',
+          'ink-4': 'var(--hf-ink-4)',
+          'surface': 'var(--hf-surface)',
+          'surface-2': 'var(--hf-surface-2)',
+          'border': 'var(--hf-border)',
+          'border-2': 'var(--hf-border-2)',
+        },
+      },
+      fontFamily: {
+        ui: ['var(--font-ui)'],
+        num: ['var(--font-num)'],
+        mono: ['var(--font-mono)', 'Roboto Mono', 'monospace'],
+      },
+      boxShadow: {
+        'hf-card': 'var(--shadow-card)',
+        'hf-raised': 'var(--shadow-raised)',
+        'hf-green': 'var(--shadow-green)',
       },
       keyframes: {
         'shake': {
