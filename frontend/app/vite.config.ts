@@ -297,7 +297,7 @@ export default defineConfig({
     ...(!isTest && process.env.ENABLE_VUE_DEVTOOLS ? [vueDevTools()] : []),
   ],
   server: {
-    port: 8080,
+    port: 5173,
     hmr: hmrEnabled,
     watch: {
       ignored: [

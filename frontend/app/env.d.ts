@@ -9,4 +9,8 @@ interface ImportMetaEnv {
   readonly VITE_DOCKER: string | undefined;
   readonly VITE_ROTKI_WEBSITE_URL: string | undefined;
   readonly VITE_ACCOUNTING_UPDATE: string | undefined;
+  readonly VITE_CHAIN_ID: string | undefined;
+  readonly VITE_ROBINHOOD_RPC: string | undefined;
+  readonly VITE_BLOCK_EXPLORER: string | undefined;
+  readonly VITE_WALLETCONNECT_PROJECT_ID: string | undefined;
 }

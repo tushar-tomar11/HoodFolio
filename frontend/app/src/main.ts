@@ -1,7 +1,10 @@
 import { createRuiI8nPlugin } from '@rotki/ui-library';
 import { checkIfDevelopment } from '@shared/utils';
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
+import { WagmiPlugin } from '@wagmi/vue';
 import { createPinia } from 'pinia';
 import App from '@/App.vue';
+import { wagmiConfig } from '@/chain/wagmi-config';
 import { i18n } from '@/i18n';
 import { setupFormatter } from '@/modules/assets/amount-display/setup-formatter';
 import { setupDayjs } from '@/modules/core/common/data/date';
@@ -65,6 +68,12 @@ app.use(pinia);
 app.use(i18n);
 app.use(createRuiI8nPlugin(i18n));
 app.use(router);
+app.use(WagmiPlugin, { config: wagmiConfig, reconnectOnMount: true });
+app.use(VueQueryPlugin, {
+  queryClient: new QueryClient({
+    defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
+  }),
+});
 app.mount('#app');
 
 setupDayjs();

@@ -210,7 +210,7 @@ cli.command('', 'Rotki frontend development server')
   .option('--web', 'Run as web-only (no Electron)')
   .option('--remote-debugging-port <port>', 'Chrome remote debugging port')
   .option('--mode <mode>', 'Development mode', { default: 'development' })
-  .option('--port <port>', 'Listening port', { default: 8080 })
+  .option('--port <port>', 'Listening port', { default: 5173 })
   .option('--open', 'Open the web app in the browser on start (web mode only, default: on, off under CI and coding agents; use --no-open to disable)', { default: true })
   .action(async (options) => {
     await serve({
