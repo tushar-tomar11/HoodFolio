@@ -1,0 +1,6 @@
+{
+  "buildCommand": "pnpm exec tsx scripts/build.ts --renderer-only",
+  "outputDirectory": "dist",
+  "framework": "vue",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

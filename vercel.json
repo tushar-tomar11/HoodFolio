@@ -1,0 +1,7 @@
+{
+  "installCommand": "pnpm --dir frontend install",
+  "buildCommand": "pnpm --dir frontend/app exec tsx scripts/build.ts --renderer-only",
+  "outputDirectory": "frontend/app/dist",
+  "framework": "vue",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
