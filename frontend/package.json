@@ -45,7 +45,10 @@
     "setup:hooks": "cd .. && husky frontend/.husky",
     "lint-staged": "lint-staged",
     "copy": "tsx scripts/copy-data.ts",
-    "get-protocols": "pnpm run --filter rotki get-protocols"
+    "get-protocols": "pnpm run --filter rotki get-protocols",
+    "docs:dev": "pnpm --dir ../docs-site dev",
+    "docs:build": "pnpm --dir ../docs-site build",
+    "docs:preview": "pnpm --dir ../docs-site preview"
   },
   "devDependencies": {
     "@clack/prompts": "catalog:",

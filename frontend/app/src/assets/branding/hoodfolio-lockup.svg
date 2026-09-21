@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 88" fill="none" role="img" aria-label="HoodFolio">
+  <polygon fill="#00C805" points="18,8 46,8 28,80 0,80"/>
+  <polygon fill="#00C805" points="50,0 78,0 56,80 28,80"/>
+  <text x="100" y="64" font-family="Space Grotesk, Segoe UI, system-ui, sans-serif" font-size="56" font-weight="700" letter-spacing="-1.2">
+    <tspan fill="#00C805">Hood</tspan><tspan fill="#1A1A1E">Folio</tspan>
+  </text>
+</svg>

@@ -49,6 +49,11 @@
   --hf-surface:    #FFFFFF;   /* Cards, panels */
   --hf-surface-2:  #EFF0F5;   /* Alternate rows, secondary bg */
   --hf-surface-3:  #E5E7EE;   /* Active/selected states */
+  --hf-hero-image: url('/hero/hero-light.jpg');
+  --hf-nav-active-bg: #E5FBE5;
+  --hf-nav-active-fg: #00A303;
+  --hf-btn-secondary-bg: #FFFFFF;
+  --hf-btn-secondary-border: #E2E3EB;
 
   /* ── Robinhood Green — THE brand color ── */
   --hf-green:      #00C805;   /* Robinhood's actual green: bright, unmistakable */
@@ -82,6 +87,7 @@
 
   /* ── Chain ticker bar ── */
   --hf-ticker-bg:  #0A0A0A;   /* Near-black — Bloomberg terminal */
+  --hf-nav-bg:     rgb(255 255 255 / 0.95);
 
   /* ── Typography ── */
   --font-ui:   'Space Grotesk', 'Segoe UI', system-ui, sans-serif; /* Labels, headings */
@@ -100,9 +106,46 @@
   --shadow-green:  0 4px 20px rgba(0, 200, 5, 0.25);
 }
 
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --hf-bg:         #070A08;
+  --hf-surface:    #121614;
+  --hf-surface-2:  #1A1F1C;
+  --hf-surface-3:  #242A26;
+  --hf-green-bg:   #0C2810;
+  --hf-green-text: #5DFF62;
+  --hf-red-bg:     #2A1010;
+  --hf-red-text:   #FF7A73;
+  --hf-amber-bg:   #2A1C08;
+  --hf-amber-text: #FFC14D;
+  --hf-blue-bg:    #0D1A33;
+  --hf-ink:        #F3F3F6;
+  --hf-ink-2:      #D2D2D8;
+  --hf-ink-3:      #9A9AA6;
+  --hf-ink-4:      #6E6E7A;
+  --hf-border:     #243028;
+  --hf-border-2:   #334038;
+  --hf-ticker-bg:  #050505;
+  --hf-nav-bg:     rgb(7 10 8 / 0.94);
+  --hf-hero-image: url('/hero/hero-dark.jpg');
+  --hf-nav-active-bg: #00C805;
+  --hf-nav-active-fg: #070A08;
+  --hf-btn-secondary-bg: rgb(8 12 10 / 0.55);
+  --hf-btn-secondary-border: rgb(255 255 255 / 0.18);
+  --shadow-card:   0 1px 3px rgba(0, 0, 0, 0.45);
+  --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-modal:  0 20px 60px rgba(0, 0, 0, 0.55);
+  --shadow-green:  0 4px 18px rgba(0, 200, 5, 0.28);
+}
+
 /* ── Global Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; font-size: 16px; background: var(--hf-bg); color: var(--hf-ink); }
+body {
+  margin: 0;
+  background: var(--hf-bg);
+  color: var(--hf-ink);
+}
 
 /* ── Scrollbars — thin, green on hover ── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }

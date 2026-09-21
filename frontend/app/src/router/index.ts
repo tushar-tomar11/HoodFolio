@@ -42,7 +42,11 @@ export const router = createRouter({
     { path: '/analytics', name: 'analytics', component: loadAnalytics, meta: { title: 'Analytics' } },
     { path: '/:pathMatch(.*)*', name: '404', component: loadNotFound, meta: { title: 'Not found' } },
   ],
-  scrollBehavior: () => ({ left: 0, top: 0 }),
+  scrollBehavior: (to) => {
+    if (to.hash)
+      return { el: to.hash, top: 72 };
+    return { left: 0, top: 0 };
+  },
 });
 
 router.beforeEach((to) => {

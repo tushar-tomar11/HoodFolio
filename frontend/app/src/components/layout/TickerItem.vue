@@ -1,49 +1,57 @@
 <script setup lang="ts">
-import { calcPremium } from '@/chain/mock-data';
+import StockLogo from '@/components/stocks/StockLogo.vue';
+import { formatPremium } from '@/utils/formatting';
 
 defineOptions({ inheritAttrs: false });
 
 const {
   symbol,
-  onChainPrice,
-  traditionalPrice,
+  onChainPrice = null,
+  premium,
+  hasData = false,
 } = defineProps<{
   symbol: string;
-  onChainPrice: number;
-  traditionalPrice: number;
+  onChainPrice?: number | null;
+  premium?: number;
+  hasData?: boolean;
 }>();
 
-const premium = computed(() => calcPremium(onChainPrice, traditionalPrice));
-
-const premiumText = computed(() => {
-  const n = Math.abs(premium.value).toFixed(2);
-  if (premium.value > 0)
-    return `▲${n}% PREMIUM`;
-  if (premium.value < 0)
-    return `▼${n}% DISCOUNT`;
-  return 'PAR';
+const premiumLabel = computed(() => {
+  if (premium === undefined || !Number.isFinite(premium))
+    return '—';
+  return formatPremium(premium).text;
 });
 
 const premiumClass = computed(() => {
-  if (premium.value > 0)
+  if (premium === undefined || !Number.isFinite(premium))
+    return 'ticker-item__prem--flat';
+  if (premium > 0.1)
     return 'ticker-item__prem--up';
-  if (premium.value < 0)
+  if (premium < -0.1)
     return 'ticker-item__prem--down';
   return 'ticker-item__prem--flat';
 });
 
-const priceText = computed(() => `$${onChainPrice.toFixed(onChainPrice >= 10 ? 2 : 3)}`);
+const priceText = computed(() => {
+  if (!hasData || onChainPrice === null || onChainPrice === undefined)
+    return '---';
+  return `$${onChainPrice.toFixed(onChainPrice >= 10 ? 2 : 3)}`;
+});
 </script>
 
 <template>
   <span class="ticker-item">
+    <StockLogo
+      :symbol="symbol"
+      :size="16"
+    />
     <span class="ticker-item__sym">{{ symbol }}</span>
     <span class="ticker-item__price">{{ priceText }}</span>
     <span
       class="ticker-item__prem"
       :class="premiumClass"
     >
-      {{ premiumText }}
+      {{ premiumLabel }}
     </span>
     <span
       class="ticker-item__dot"
@@ -58,7 +66,7 @@ const priceText = computed(() => `$${onChainPrice.toFixed(onChainPrice >= 10 ? 2
 .ticker-item {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
 }
 

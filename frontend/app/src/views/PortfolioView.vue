@@ -1,63 +1,48 @@
 <script setup lang="ts">
-import { STOCK_TOKENS } from '@/chain/robinhood-chain';
+import { MORPHO_HOME, ROBINHOOD_EXPLORER, STOCK_TOKENS, UNISWAP_HOME } from '@/chain/robinhood-chain';
 import HfButton from '@/components/hf/HfButton.vue';
 import HfSkeleton from '@/components/hf/HfSkeleton.vue';
 import HfStatusCard from '@/components/hf/HfStatusCard.vue';
-import MemeHoldings from '@/components/portfolio/MemeHoldings.vue';
 import PortfolioHeader from '@/components/portfolio/PortfolioHeader.vue';
 import StockHoldings from '@/components/portfolio/StockHoldings.vue';
-import YieldCard from '@/components/portfolio/YieldCard.vue';
 import WalletModal from '@/components/wallet/WalletModal.vue';
 import { usePageMeta } from '@/composables/use-page-meta';
 import { usePortfolioPage } from '@/composables/use-portfolio-page';
 import { useToast } from '@/composables/use-toast';
 import { useWalletStore } from '@/store/wallet';
+import { formatTokenAmount } from '@/utils/formatting';
 
 usePageMeta(
   'My Portfolio | HoodFolio',
-  'Track Robinhood Chain stock tokens, USDG yield, and meme coins from your wallet.',
+  'Track Robinhood Chain stock tokens and USDG from your wallet.',
 );
-
-type PortfolioTab = 'all' | 'stocks' | 'memes' | 'yield';
-
-const TABS: { id: PortfolioTab; label: string }[] = [
-  { id: 'all', label: 'All Holdings' },
-  { id: 'stocks', label: 'Stocks' },
-  { id: 'memes', label: 'Meme Coins' },
-  { id: 'yield', label: 'Yield' },
-];
 
 const nvda = STOCK_TOKENS.NVDA;
 const NVDA_TRADE = nvda
   ? `https://app.uniswap.org/swap?outputCurrency=${nvda.address}&chain=robinhood`
-  : 'https://app.uniswap.org';
+  : UNISWAP_HOME;
+const BRIDGE_ETH = 'https://bridge.arbitrum.io';
 
-const route = useRoute();
 const wallet = useWalletStore();
 const toast = useToast();
 const {
   address,
-  change24hPct,
-  change24hUSD,
+  emptyKind,
   error,
+  ethBalanceWei,
+  hasFetched,
   isLoading,
-  isPreview,
   lastUpdated,
-  memeHoldings,
   refresh,
   stockHoldings,
   totalValueUSD,
-  usdgPosition,
+  usdgBalance,
+  usdgFormatted,
 } = usePortfolioPage();
-const selectedTab = ref<PortfolioTab>('all');
 const modalOpen = ref(false);
 
 function openModal(): void {
   modalOpen.value = true;
-}
-
-function setTab(id: PortfolioTab): void {
-  selectedTab.value = id;
 }
 
 async function onRefresh(): Promise<void> {
@@ -65,34 +50,28 @@ async function onRefresh(): Promise<void> {
   toast.show('↻ Portfolio refreshed', 'info');
 }
 
-const demoUnlocked = computed(() =>
-  import.meta.env.DEV && String(route.query.demo ?? '') === '1',
+const showLoading = computed(() => wallet.isConnected && (isLoading.value || !hasFetched.value));
+const blockscoutHref = computed(() =>
+  address.value ? `${ROBINHOOD_EXPLORER}/address/${address.value}` : ROBINHOOD_EXPLORER,
 );
-
-const displayAddress = computed(() =>
-  address.value || (demoUnlocked.value ? '0x322F0929c4625eD5bAd873c95208D54E1c003b2d' : ''),
-);
-
-const showDashboard = computed(() => wallet.isConnected || demoUnlocked.value);
-const showHeader = computed(() => selectedTab.value === 'all' || selectedTab.value === 'stocks');
-const showStocks = computed(() => selectedTab.value === 'all' || selectedTab.value === 'stocks');
-const showMemes = computed(() => selectedTab.value === 'all' || selectedTab.value === 'memes');
-const showYield = computed(() => selectedTab.value === 'all' || selectedTab.value === 'yield');
+const ethFormatted = computed(() => formatTokenAmount(ethBalanceWei.value, 18));
 </script>
 
 <template>
   <div class="pf">
-    <template v-if="!showDashboard">
-      <div class="pf-gate">
+    <template v-if="!wallet.isConnected">
+      <div
+        class="pf-gate"
+        data-testid="connect-prompt"
+      >
         <p class="pf-gate__lock">
-          🔒
+          📊
         </p>
         <h1 class="pf-gate__h">
-          Connect your wallet to see your portfolio
+          Connect your wallet to see your real portfolio
         </h1>
         <p class="pf-gate__p">
-          HoodFolio reads directly from Robinhood Chain.
-          Your data stays on-chain — we never store anything.
+          HoodFolio reads directly from Robinhood Chain — nothing is stored.
         </p>
         <HfButton
           variant="primary"
@@ -106,9 +85,12 @@ const showYield = computed(() => selectedTab.value === 'all' || selectedTab.valu
 
     <template v-else>
       <div
-        v-if="isLoading"
+        v-if="showLoading"
         class="pf-load"
       >
+        <p class="pf-load__t">
+          Fetching your balances from Robinhood Chain...
+        </p>
         <HfSkeleton
           height="42px"
           width="240px"
@@ -128,13 +110,83 @@ const showYield = computed(() => selectedTab.value === 'all' || selectedTab.valu
         @action="onRefresh()"
       />
 
-      <template v-else>
-        <div
-          v-if="isPreview"
-          class="pf-empty"
+      <template v-else-if="stockHoldings.length > 0">
+        <HfButton
+          variant="ghost"
+          size="sm"
+          @click="onRefresh()"
         >
+          Refresh
+        </HfButton>
+        <PortfolioHeader
+          data-testid="portfolio-header"
+          :total-value-usd="totalValueUSD"
+          :address="address"
+          :last-updated="lastUpdated"
+          :stock-count="stockHoldings.length"
+          :usdg-balance="usdgFormatted"
+        />
+        <StockHoldings :holdings="stockHoldings" />
+        <section class="pf-other card">
+          <h2 class="pf-other__h">
+            Other tokens
+          </h2>
+          <p class="num">
+            ETH {{ ethFormatted }}
+          </p>
+          <p
+            v-if="usdgBalance > 0"
+            class="num"
+          >
+            USDG {{ usdgFormatted }}
+          </p>
+          <p class="pf-other__p">
+            Meme coin tracking coming soon. To see your full token list, view this wallet on Blockscout:
+          </p>
+          <a
+            class="pf-other__a"
+            :href="blockscoutHref"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on Blockscout ↗
+          </a>
+        </section>
+        <section class="pf-other card">
+          <h2 class="pf-other__h">
+            USDG
+          </h2>
+          <p>
+            USDG Balance: {{ usdgFormatted }} USDG
+          </p>
+          <p class="pf-other__p">
+            Earn ~7% APY by depositing USDG into Morpho on Robinhood Chain.
+          </p>
+          <a
+            class="pf-other__a"
+            :href="MORPHO_HOME"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Deposit on Morpho ↗
+          </a>
+          <p class="pf-note">
+            Balance read live from Chain 4663 via viem multicall.
+          </p>
+        </section>
+      </template>
+
+      <div
+        v-else
+        class="pf-empty"
+        data-testid="empty-portfolio"
+      >
+        <template v-if="emptyKind === 'eth'">
           <p class="pf-empty__t">
-            You don't have any stock tokens yet.
+            You have ETH but no stock tokens yet.
+          </p>
+          <p class="num pf-empty__eth">
+            {{ wallet.ethBalance }}
           </p>
           <a
             class="pf-empty__a"
@@ -144,60 +196,34 @@ const showYield = computed(() => selectedTab.value === 'all' || selectedTab.valu
           >
             Buy NVDA, TSLA, or AAPL on Uniswap →
           </a>
-          <p class="pf-note">
-            This is what it looks like
+        </template>
+        <template v-else>
+          <p class="pf-empty__t">
+            This wallet has no tokens on Robinhood Chain.
           </p>
-        </div>
-
-        <nav
-          class="pf-tabs"
-          aria-label="Holdings"
-        >
-          <button
-            v-for="tab in TABS"
-            :key="tab.id"
-            type="button"
-            class="pf-tabs__btn"
-            :class="{ 'pf-tabs__btn--on': selectedTab === tab.id }"
-            @click="setTab(tab.id)"
-          >
-            {{ tab.label }}
-          </button>
-        </nav>
-
-        <HfButton
-          variant="ghost"
-          size="sm"
-          @click="onRefresh()"
-        >
-          Refresh
-        </HfButton>
-
-        <PortfolioHeader
-          v-if="showHeader"
-          :total-value-usd="totalValueUSD"
-          :change24h-usd="change24hUSD"
-          :change24h-pct="change24hPct"
-          :address="displayAddress"
-          :last-updated="lastUpdated"
-          :stock-count="stockHoldings.length"
-          :usdg-yield-usd="usdgPosition.earnedUSD"
-          :meme-count="memeHoldings.length"
-        />
-
-        <StockHoldings
-          v-if="showStocks"
-          :holdings="stockHoldings"
-        />
-        <MemeHoldings
-          v-if="showMemes"
-          :holdings="memeHoldings"
-        />
-        <YieldCard
-          v-if="showYield"
-          :position="usdgPosition"
-        />
-      </template>
+          <p class="pf-empty__p">
+            Bridge ETH from Ethereum → then swap for stock tokens on Uniswap.
+          </p>
+          <div class="pf-empty__btns">
+            <a
+              class="pf-empty__a"
+              :href="BRIDGE_ETH"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Bridge ETH
+            </a>
+            <a
+              class="pf-empty__a"
+              :href="UNISWAP_HOME"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Uniswap
+            </a>
+          </div>
+        </template>
+      </div>
     </template>
 
     <WalletModal
@@ -251,14 +277,32 @@ const showYield = computed(() => selectedTab.value === 'all' || selectedTab.valu
   gap: 12px;
 }
 
+.pf-load__t {
+  color: var(--hf-ink-3);
+  margin-bottom: 8px;
+}
+
 .pf-empty {
-  margin-bottom: 16px;
+  margin-top: 32px;
+  text-align: center;
 }
 
 .pf-empty__t {
   font-family: var(--font-ui);
   font-weight: 700;
+  font-size: 20px;
   margin-bottom: 8px;
+}
+
+.pf-empty__p {
+  color: var(--hf-ink-3);
+  margin-bottom: 16px;
+}
+
+.pf-empty__eth {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
 
 .pf-empty__a {
@@ -266,7 +310,39 @@ const showYield = computed(() => selectedTab.value === 'all' || selectedTab.valu
   color: var(--hf-green);
   font-weight: 600;
   text-decoration: none;
-  margin-bottom: 12px;
+  margin: 0 8px 12px;
+}
+
+.pf-empty__btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pf-other {
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.pf-other__h {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.pf-other__p {
+  color: var(--hf-ink-3);
+  margin: 8px 0;
+}
+
+.pf-other__a {
+  color: var(--hf-green);
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .pf-note {
@@ -275,31 +351,6 @@ const showYield = computed(() => selectedTab.value === 'all' || selectedTab.valu
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 13px;
-  margin-bottom: 20px;
-}
-
-.pf-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 24px;
-}
-
-.pf-tabs__btn {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--hf-ink-3);
-  background: transparent;
-  border: 0;
-  border-radius: 8px;
-  padding: 8px 14px;
-  cursor: pointer;
-}
-
-.pf-tabs__btn--on {
-  color: var(--hf-green);
-  background: var(--hf-green-bg);
-  font-weight: 600;
+  margin-top: 12px;
 }
 </style>

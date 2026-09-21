@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --vp-c-brand-1: #00C805;
+  --vp-c-brand-2: #00A303;
+  --vp-c-brand-3: #009002;
+  --vp-c-brand-soft: rgba(0, 200, 5, 0.12);
+  --vp-c-bg: #F6F7F9;
+  --vp-c-bg-soft: #EFF0F5;
+  --vp-c-bg-mute: #E5E7EE;
+  --vp-sidebar-bg-color: #FFFFFF;
+  --vp-c-divider: #E2E3EB;
+  --vp-font-family-base: 'Inter', system-ui, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --vp-nav-bg-color: rgb(255 255 255 / 0.95);
+  --vp-nav-logo-height: 28px;
+  --vp-c-code-bg: #F0F1F5;
+  --vp-code-font-size: 13px;
+}
+
+.dark {
+  --vp-c-brand-1: #00C805;
+  --vp-c-brand-2: #00E006;
+  --vp-c-brand-3: #33D433;
+  --vp-c-brand-soft: rgba(0, 200, 5, 0.15);
+  --vp-c-bg: #080D08;
+  --vp-c-bg-soft: #0C130C;
+  --vp-c-bg-mute: #131F13;
+  --vp-sidebar-bg-color: #080D08;
+  --vp-c-divider: #1E2E1E;
+  --vp-nav-bg-color: rgb(8 13 8 / 0.95);
+  --vp-c-code-bg: #0D160D;
+}
+
+.VPSidebarItem.is-active > .item {
+  border-left: 2px solid var(--vp-c-brand-1);
+  padding-left: 12px;
+  margin-left: -2px;
+}
+
+.VPSidebarItem.is-active .link {
+  color: var(--vp-c-brand-1) !important;
+  font-weight: 600;
+}
+
+.VPNavBarMenuLink.active,
+.VPNavBarMenuLink:hover {
+  color: var(--vp-c-brand-1) !important;
+}
+
+.VPNavBarSearch .DocSearch-Button {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+}
+
+.vp-doc a {
+  color: var(--vp-c-brand-1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.vp-doc a:hover {
+  color: var(--vp-c-brand-2);
+}
+
+.vp-doc div[class*='language-'] code,
+.vp-doc [class*='language-'] code {
+  color: inherit;
+  background: transparent;
+  padding: 0;
+}
+
+.vp-doc :not(pre) > code {
+  font-family: var(--vp-font-family-mono);
+  background: var(--vp-c-code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--vp-c-brand-1);
+}
+
+.vp-doc blockquote {
+  border-left: 4px solid var(--vp-c-brand-soft);
+  background: var(--vp-c-brand-soft);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+.custom-block.tip {
+  --vp-custom-block-tip-border: var(--vp-c-brand-1);
+  --vp-custom-block-tip-bg: rgb(0 200 5 / 0.06);
+  --vp-custom-block-tip-code-bg: rgb(0 200 5 / 0.08);
+}
+
+.VPDocAsideOutline .outline-link.active {
+  color: var(--vp-c-brand-1);
+  border-left-color: var(--vp-c-brand-1);
+}
+
+.VPDocFooter .edit-link a {
+  color: var(--vp-c-brand-1);
+}
+
+.VPLastUpdated {
+  font-size: 13px;
+  color: var(--vp-c-text-3);
+}
+
+.VPButton.brand {
+  background: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+  color: white;
+}
+
+.VPButton.brand:hover {
+  background: var(--vp-c-brand-2);
+  border-color: var(--vp-c-brand-2);
+}
+
+.VPFeature {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+}
+
+.VPFeature:hover {
+  border-color: var(--vp-c-brand-soft);
+}
+
+.VPFeature .icon {
+  font-size: 32px;
+}

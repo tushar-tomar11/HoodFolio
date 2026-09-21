@@ -5,10 +5,23 @@ import HoodNavbar from '@/components/layout/HoodNavbar.vue';
 import ToastStack from '@/components/ui/ToastStack.vue';
 import { useChainData } from '@/composables/use-chain-data';
 import { useWalletToasts } from '@/composables/use-wallet-toasts';
+import { usePriceStore } from '@/store/prices';
+import { useThemeStore } from '@/store/theme';
 
 const route = useRoute();
 useChainData();
 useWalletToasts();
+const priceStore = usePriceStore();
+const themeStore = useThemeStore();
+
+onMounted(() => {
+  themeStore.hydrate();
+  priceStore.startAutoRefresh();
+});
+
+onUnmounted(() => {
+  priceStore.stopAutoRefresh();
+});
 </script>
 
 <template>
@@ -57,8 +70,10 @@ body {
   color: var(--hf-ink);
 }
 
-.hf-main {
-  min-height: calc(100vh - 28px - 60px);
+#hoodfolio {
+  background: var(--hf-bg);
+  min-height: 100vh;
+  color: var(--hf-ink);
 }
 
 .page-enter-active,

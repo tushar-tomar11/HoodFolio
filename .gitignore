@@ -42,3 +42,13 @@ gha-benchmark.json
 
 # Raw bank API spike data (real financial data, never committed)
 .bank_spike_data/
+
+# HoodFolio
+docs-site/node_modules/
+docs-site/.vitepress/dist/
+docs-site/.vitepress/cache/
+frontend/.env
+frontend/app/.env
+frontend/app/.env.local
+frontend/app/vitest-out.txt
+

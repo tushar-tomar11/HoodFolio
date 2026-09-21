@@ -33,7 +33,13 @@ function ariaSort(key: MarketSortKey): 'ascending' | 'descending' | 'none' {
 }
 
 function changeUp(pct: number): boolean {
-  return pct >= 0;
+  return Number.isFinite(pct) && pct >= 0;
+}
+
+function changeLabel(pct: number): string {
+  if (!Number.isFinite(pct))
+    return '—';
+  return `${pct >= 0 ? '▲' : '▼'}${formatPercent(Math.abs(pct), false)}`;
 }
 </script>
 
@@ -132,11 +138,10 @@ function changeUp(pct: number): boolean {
             <StockTokenCell
               :symbol="row.symbol"
               :name="row.name"
-              :logo-domain="row.logoDomain"
             />
           </td>
           <td class="col-right mono num">
-            {{ formatUSD(row.onChainPrice) }}
+            {{ row.onChainPrice === null ? 'Price unavailable' : formatUSD(row.onChainPrice) }}
           </td>
           <td class="col-right mono num st-market">
             {{ formatUSD(row.marketPrice) }}
@@ -148,7 +153,7 @@ function changeUp(pct: number): boolean {
             class="col-right num st-chg"
             :class="changeUp(row.change24hPct) ? 'price-up' : 'price-down'"
           >
-            {{ changeUp(row.change24hPct) ? '▲' : '▼' }}{{ formatPercent(Math.abs(row.change24hPct), false) }}
+            {{ changeLabel(row.change24hPct) }}
           </td>
           <td
             v-if="!compact"

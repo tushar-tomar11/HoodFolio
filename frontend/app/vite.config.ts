@@ -78,15 +78,26 @@ const e2eProxyTarget = `http://127.0.0.1:${E2E_BASE_PROXY_PORT + Number(process.
  * never heard of it. The 404 arrives as a failed dynamic import of the login chunk, and
  * the app renders a blank page with nothing in the console naming the proxy.
  */
-const previewProxy = e2eShard > 0
-  ? {
-      '^/api/': { target: e2eProxyTarget },
-      // Task and balance updates the backend pushes over a websocket.
-      '^/ws/': { target: e2eProxyTarget, ws: true },
-      // starling strips the prefix itself, so this is a plain forward.
-      '^/colibri/': { target: e2eProxyTarget },
-    }
-  : undefined;
+const dexPaprikaProxy = {
+  '^/dexpaprika/': {
+    target: 'https://api.dexpaprika.com',
+    changeOrigin: true,
+    rewrite: (path: string) => path.replace(/^\/dexpaprika/, ''),
+  },
+};
+
+const previewProxy = {
+  ...dexPaprikaProxy,
+  ...(e2eShard > 0
+    ? {
+        '^/api/': { target: e2eProxyTarget },
+        // Task and balance updates the backend pushes over a websocket.
+        '^/ws/': { target: e2eProxyTarget, ws: true },
+        // starling strips the prefix itself, so this is a plain forward.
+        '^/colibri/': { target: e2eProxyTarget },
+      }
+    : {}),
+};
 /*
  * Single source of truth for the accounting-update feature: the backend gates its endpoints
  * behind ROTKI_ACCOUNTING_UPDATE, so the same shell var is mirrored into a VITE_-prefixed entry,
@@ -298,6 +309,7 @@ export default defineConfig({
   ],
   server: {
     port: 5173,
+    proxy: dexPaprikaProxy,
     hmr: hmrEnabled,
     watch: {
       ignored: [

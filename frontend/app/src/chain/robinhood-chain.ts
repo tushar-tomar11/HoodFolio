@@ -6,6 +6,12 @@ export const ROBINHOOD_RPC = import.meta.env.VITE_ROBINHOOD_RPC ?? 'https://main
 
 export const ROBINHOOD_EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER ?? 'https://robinhoodchain.blockscout.com';
 
+export const WETH_ADDRESS = '0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73' as const;
+
+export const UNISWAP_HOME = 'https://app.uniswap.org/?chain=robinhood';
+
+export const MORPHO_HOME = 'https://app.morpho.org';
+
 export const robinhoodChain = defineChain({
   id: ROBINHOOD_CHAIN_ID,
   name: 'Robinhood Chain',
@@ -41,12 +47,22 @@ export const STOCK_TOKENS: Record<string, StockToken> = {
   COIN: { symbol: 'COIN', name: 'Coinbase', address: '0x6330D8C3178a418788dF01a47479c0ce7CCF450b', decimals: 18 },
   SPY: { symbol: 'SPY', name: 'S&P 500 ETF', address: '0x117cc2133c37B721F49dE2A7a74833232B3B4C0C', decimals: 18 },
   QQQ: { symbol: 'QQQ', name: 'Nasdaq 100 ETF', address: '0xD5f3879160bc7c32ebb4dC785F8a4F505888de68', decimals: 18 },
-  USDG: { symbol: 'USDG', name: 'USD Gold', address: '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168', decimals: 18 },
+  USDG: { symbol: 'USDG', name: 'USD Gold', address: '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168', decimals: 6 },
 };
 
 export const publicClient: PublicClient = createPublicClient({
   chain: robinhoodChain,
   transport: http(ROBINHOOD_RPC),
 });
+
+export const NATIVE_ETH = '0x0000000000000000000000000000000000000000' as const;
+
+export function symbolForAddress(address: string): string {
+  const lower = address.toLowerCase();
+  if (lower === NATIVE_ETH || lower === WETH_ADDRESS.toLowerCase())
+    return lower === NATIVE_ETH ? 'ETH' : 'WETH';
+  const match = Object.values(STOCK_TOKENS).find(token => token.address.toLowerCase() === lower);
+  return match?.symbol ?? `${address.slice(0, 6)}…`;
+}
 
 export { erc20Abi };

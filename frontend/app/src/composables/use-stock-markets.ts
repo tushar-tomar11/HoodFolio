@@ -1,5 +1,7 @@
 import type { ComputedRef, DeepReadonly, Ref } from 'vue';
+import { STOCK_TOKENS } from '@/chain/robinhood-chain';
 import { getStockMarketRows, type MarketSortKey, type SectorFilter, type StockMarketRow } from '@/chain/stock-markets';
+import { usePriceStore } from '@/store/prices';
 
 export const SECTOR_FILTERS: { id: SectorFilter; label: string }[] = [
   { id: 'all', label: 'All' },
@@ -9,10 +11,9 @@ export const SECTOR_FILTERS: { id: SectorFilter; label: string }[] = [
 ];
 
 export const SORT_OPTIONS: { id: MarketSortKey; label: string }[] = [
-  { id: 'marketCapUSD', label: 'Market Cap' },
   { id: 'volume24hUSD', label: 'Volume' },
   { id: 'premium', label: 'Premium' },
-  { id: 'change24hPct', label: '24h Change' },
+  { id: 'onChainPrice', label: 'On-chain price' },
 ];
 
 export interface StockMarketsModel {
@@ -37,7 +38,11 @@ export function compareMarketRows(
   const mul = dir === 'asc' ? 1 : -1;
   if (key === 'symbol')
     return mul * left.symbol.localeCompare(right.symbol);
-  return mul * (left[key] - right[key]);
+  const leftVal = left[key];
+  const rightVal = right[key];
+  const a = typeof leftVal === 'number' ? leftVal : Number.NEGATIVE_INFINITY;
+  const b = typeof rightVal === 'number' ? rightVal : Number.NEGATIVE_INFINITY;
+  return mul * (a - b);
 }
 
 function matchesSearch(row: StockMarketRow, query: string): boolean {
@@ -46,11 +51,28 @@ function matchesSearch(row: StockMarketRow, query: string): boolean {
   return row.symbol.toLowerCase().includes(query) || row.name.toLowerCase().includes(query);
 }
 
+function volumeBySymbol(pools: { tokens?: { id: string }[]; volume_usd_24h?: number }[]): Record<string, number> {
+  const addrToSymbol = new Map(
+    Object.values(STOCK_TOKENS).map(token => [token.address.toLowerCase(), token.symbol]),
+  );
+  const volumes: Record<string, number> = {};
+  for (const pool of pools) {
+    const vol = pool.volume_usd_24h ?? 0;
+    for (const token of pool.tokens ?? []) {
+      const symbol = addrToSymbol.get(token.id.toLowerCase());
+      if (symbol)
+        volumes[symbol] = (volumes[symbol] ?? 0) + vol;
+    }
+  }
+  return volumes;
+}
+
 export function useStockMarkets(): StockMarketsModel {
+  const prices = usePriceStore();
   const searchInput = shallowRef('');
   const search = shallowRef('');
   const sector = shallowRef<SectorFilter>('all');
-  const sortKey = shallowRef<MarketSortKey>('marketCapUSD');
+  const sortKey = shallowRef<MarketSortKey>('volume24hUSD');
   const sortDir = shallowRef<'asc' | 'desc'>('desc');
   let searchTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -65,10 +87,14 @@ export function useStockMarkets(): StockMarketsModel {
     clearTimeout(searchTimer);
   });
 
+  const sourceRows = computed(() =>
+    getStockMarketRows(prices.onChainPrices, volumeBySymbol(prices.topPools)),
+  );
+
   const filtered = computed(() => {
     const query = search.value;
     const sectorId = sector.value;
-    return getStockMarketRows().filter((row) => {
+    return sourceRows.value.filter((row) => {
       if (sectorId !== 'all' && row.sector !== sectorId)
         return false;
       return matchesSearch(row, query);

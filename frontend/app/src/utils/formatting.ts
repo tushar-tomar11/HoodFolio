@@ -64,11 +64,9 @@ export function formatPercent(n: number, showSign = true): string {
   const abs = `${Math.abs(n).toFixed(2)}%`;
   if (!showSign)
     return abs;
-  if (n > 0)
-    return `+${abs}`;
   if (n < 0)
     return `-${abs}`;
-  return abs;
+  return `+${abs}`;
 }
 
 /** Human-readable token amount from on-chain bigint units. */
@@ -78,9 +76,10 @@ export function formatTokenAmount(n: bigint, decimals = 18): string {
   const base = 10n ** BigInt(decimals);
   const whole = value / base;
   const frac = value % base;
-  const fracStr = frac.toString().padStart(decimals, '0').replace(/0+$/, '').slice(0, 6);
+  const shown = decimals <= 6 ? 2 : 4;
+  const fracStr = frac.toString().padStart(decimals, '0').slice(0, shown).padEnd(shown, '0');
   const wholeStr = whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  const body = fracStr.length > 0 ? `${wholeStr}.${fracStr}` : wholeStr;
+  const body = `${wholeStr}.${fracStr}`;
   return negative ? `-${body}` : body;
 }
 
@@ -119,14 +118,12 @@ export function explorerUrl(addr: string, type: ExplorerPath = 'address'): strin
 }
 
 /** "2h ago", "3d ago", "just now" */
-export function timeAgo(timestamp: number | Date): string {
+export function timeAgo(timestamp: number | Date, nowMs = Date.now()): string {
   const ms = timestamp instanceof Date ? timestamp.getTime() : timestamp;
   const normalized = ms < 1e12 ? ms * 1000 : ms;
-  const delta = Date.now() - normalized;
+  const delta = nowMs - normalized;
 
-  if (!Number.isFinite(delta) || delta < 0)
-    return 'just now';
-  if (delta < 60_000)
+  if (!Number.isFinite(delta) || delta < 60_000)
     return 'just now';
 
   const minutes = Math.floor(delta / 60_000);
@@ -141,9 +138,8 @@ export function timeAgo(timestamp: number | Date): string {
   if (days < 30)
     return `${days}d ago`;
 
-  const months = Math.floor(days / 30);
-  if (months < 12)
-    return `${months}mo ago`;
+  if (days < 365)
+    return `${Math.floor(days / 30)}mo ago`;
 
   return `${Math.floor(days / 365)}y ago`;
 }

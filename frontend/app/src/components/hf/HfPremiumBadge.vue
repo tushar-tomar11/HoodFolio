@@ -20,16 +20,11 @@ const tooltip = computed(() => {
 </script>
 
 <template>
-  <!--
-    Premium/Discount Indicator (HoodFolio USP)
-    If premium > 0.1:  "▲{n}% PREMIUM"  — amber  (on-chain > NYSE/NASDAQ)
-    If premium < -0.1: "▼{n}% DISCOUNT" — green  (on-chain cheaper, good for buyers)
-    Otherwise:         "AT PAR"         — grey
-  -->
   <span
     class="hf-premium"
     :class="`badge-${formatted.type}`"
     :title="tooltip"
+    data-testid="premium-badge"
   >
     {{ formatted.text }}
   </span>

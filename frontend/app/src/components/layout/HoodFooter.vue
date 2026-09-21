@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HoodLogo from '@/components/layout/HoodLogo.vue';
 import { HOOD_NAV } from '@/components/layout/nav-items';
 </script>
 
@@ -6,9 +7,12 @@ import { HOOD_NAV } from '@/components/layout/nav-items';
   <footer class="hood-footer">
     <div class="hood-footer__grid">
       <div>
-        <p class="hood-footer__brand">
-          📊 HoodFolio
-        </p>
+        <RouterLink
+          to="/"
+          class="hood-footer__brand"
+        >
+          <HoodLogo height="36px" />
+        </RouterLink>
         <p class="hood-footer__tag">
           Your Robinhood Chain Portfolio, On-Chain.
         </p>
@@ -29,8 +33,24 @@ import { HOOD_NAV } from '@/components/layout/nav-items';
             v-for="item in HOOD_NAV"
             :key="item.href"
           >
-            <RouterLink :to="item.href">
+            <a
+              v-if="item.external"
+              :href="item.href"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ item.label }} ↗
+            </a>
+            <RouterLink
+              v-else
+              :to="item.href"
+            >
               {{ item.label }}
+            </RouterLink>
+          </li>
+          <li>
+            <RouterLink :to="{ path: '/', hash: '#faq' }">
+              FAQ
             </RouterLink>
           </li>
         </ul>
@@ -52,6 +72,15 @@ import { HOOD_NAV } from '@/components/layout/nav-items';
           </li>
           <li>
             <a
+              href="https://app.morpho.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Morpho ↗
+            </a>
+          </li>
+          <li>
+            <a
               href="https://github.com/rotki/rotki"
               target="_blank"
               rel="noopener noreferrer"
@@ -66,6 +95,15 @@ import { HOOD_NAV } from '@/components/layout/nav-items';
               rel="noopener noreferrer"
             >
               Uniswap on Robinhood Chain ↗
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://docs.hoodfolio.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Documentation ↗
             </a>
           </li>
         </ul>
@@ -94,11 +132,9 @@ import { HOOD_NAV } from '@/components/layout/nav-items';
 }
 
 .hood-footer__brand {
-  font-family: var(--font-ui);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--hf-ink);
-  margin-bottom: 8px;
+  display: inline-block;
+  margin-bottom: 12px;
+  text-decoration: none;
 }
 
 .hood-footer__tag {

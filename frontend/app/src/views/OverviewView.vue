@@ -1,22 +1,28 @@
 <script setup lang="ts">
 import { getHomeStockRows } from '@/chain/stock-markets';
 import ChainStatsStrip from '@/components/overview/ChainStatsStrip.vue';
+import HomeWalletSnapshot from '@/components/overview/HomeWalletSnapshot.vue';
 import HowItWorks from '@/components/overview/HowItWorks.vue';
+import NetworkRecipe from '@/components/overview/NetworkRecipe.vue';
+import OverviewFaq from '@/components/overview/OverviewFaq.vue';
+import OverviewFeatureGrid from '@/components/overview/OverviewFeatureGrid.vue';
 import OverviewHero from '@/components/overview/OverviewHero.vue';
-import WalletPreview from '@/components/overview/WalletPreview.vue';
+import OverviewTrust from '@/components/overview/OverviewTrust.vue';
 import StockTable from '@/components/stocks/StockTable.vue';
 import WalletModal from '@/components/wallet/WalletModal.vue';
 import { usePageMeta } from '@/composables/use-page-meta';
+import { usePriceStore } from '@/store/prices';
 import { useWalletStore } from '@/store/wallet';
 
 usePageMeta(
   'HoodFolio — Robinhood Chain Portfolio Dashboard',
-  'The first dedicated portfolio dashboard for Robinhood Chain stock tokens, USDG yield, and meme coins.',
+  'Non-custodial portfolio dashboard for Robinhood Chain stock tokens, USDG, and Uniswap pools.',
 );
 
 const wallet = useWalletStore();
+const prices = usePriceStore();
 const modalOpen = ref(false);
-const homeRows = getHomeStockRows();
+const homeRows = computed(() => getHomeStockRows(prices.onChainPrices));
 
 function openModal(): void {
   modalOpen.value = true;
@@ -25,37 +31,49 @@ function openModal(): void {
 
 <template>
   <div class="ov">
-    <OverviewHero @connect="openModal()" />
-    <ChainStatsStrip />
-
-    <section class="ov-diff">
-      <h2 class="ov-diff__h">
-        What makes HoodFolio different
-      </h2>
-      <p class="ov-diff__s">
-        See exactly whether each stock token is cheaper or more expensive
-        on Robinhood Chain vs the traditional market.
-      </p>
-      <div class="card ov-diff__table">
-        <StockTable
-          :rows="homeRows"
-          compact
-        />
+    <div class="ov-stage">
+      <OverviewHero @connect="openModal()" />
+      <div class="ov-stage__stats">
+        <ChainStatsStrip />
       </div>
-      <RouterLink
-        class="ov-diff__all"
-        to="/stocks"
-      >
-        View all stock tokens →
-      </RouterLink>
-    </section>
+    </div>
 
-    <HowItWorks />
+    <div class="ov-rest">
+      <OverviewFeatureGrid />
 
-    <WalletPreview
-      v-if="!wallet.isConnected"
-      @connect="openModal()"
-    />
+      <section class="ov-diff">
+        <h2 class="ov-diff__h">
+          Live stock token markets
+        </h2>
+        <p class="ov-diff__s">
+          On-chain prices from DexPaprika. PREMIUM means the token costs more on-chain
+          than the last NYSE/NASDAQ reference; DISCOUNT means cheaper; AT PAR is within 0.1%.
+        </p>
+        <div class="card ov-diff__table">
+          <StockTable
+            :rows="homeRows"
+            compact
+          />
+        </div>
+        <RouterLink
+          class="ov-diff__all"
+          to="/stocks"
+        >
+          View all stock tokens →
+        </RouterLink>
+      </section>
+
+      <HowItWorks />
+
+      <HomeWalletSnapshot v-if="wallet.isConnected" />
+      <NetworkRecipe
+        v-else
+        @connect="openModal()"
+      />
+
+      <OverviewTrust />
+      <OverviewFaq />
+    </div>
 
     <WalletModal v-model:open="modalOpen" />
   </div>
@@ -63,14 +81,33 @@ function openModal(): void {
 
 <style scoped>
 .ov {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 32px 16px 64px;
+  padding: 0 0 64px;
 }
 
-.ov-diff {
-  margin-bottom: 56px;
+.ov-stage {
+  min-height: calc(100vh - 88px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-image: var(--hf-hero-image);
+  background-size: cover;
+  background-position: center;
+  padding: 8px 16px 28px;
 }
+
+.ov-stage__stats {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.ov-rest {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 16px 0;
+}
+
+.ov-diff { margin-bottom: 56px; }
 
 .ov-diff__h {
   font-family: var(--font-ui);
@@ -81,7 +118,7 @@ function openModal(): void {
 }
 
 .ov-diff__s {
-  max-width: 640px;
+  max-width: 720px;
   font-size: 16px;
   line-height: 1.5;
   color: var(--hf-ink-3);

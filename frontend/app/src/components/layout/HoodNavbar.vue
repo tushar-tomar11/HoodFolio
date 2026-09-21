@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import HfButton from '@/components/hf/HfButton.vue';
+import HoodLogo from '@/components/layout/HoodLogo.vue';
 import { HOOD_NAV, isNavActive } from '@/components/layout/nav-items';
+import ThemeToggle from '@/components/layout/ThemeToggle.vue';
 import WalletModal from '@/components/wallet/WalletModal.vue';
 import { useWalletStore } from '@/store/wallet';
 
@@ -70,11 +72,7 @@ watch(() => route.path, closeMenu);
         class="hood-nav__logo"
         @click="closeMenu()"
       >
-        <span class="hood-nav__mark">📊</span>
-        <span class="hood-nav__word">
-          <span class="hood-nav__hood">Hood</span>
-          <span class="hood-nav__folio">Folio</span>
-        </span>
+        <HoodLogo height="36px" />
       </RouterLink>
 
       <nav
@@ -82,7 +80,7 @@ watch(() => route.path, closeMenu);
         aria-label="Primary"
       >
         <RouterLink
-          v-for="item in HOOD_NAV"
+          v-for="item in HOOD_NAV.filter(n => !n.external)"
           :key="item.href"
           :to="item.href"
           class="hood-nav__link"
@@ -90,9 +88,41 @@ watch(() => route.path, closeMenu);
         >
           {{ item.label }}
         </RouterLink>
+        <a
+          v-for="item in HOOD_NAV.filter(n => n.external)"
+          :key="item.href"
+          :href="item.href"
+          class="nav-link-docs"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ item.label }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="10"
+            height="10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line
+              x1="10"
+              y1="14"
+              x2="21"
+              y2="3"
+            />
+          </svg>
+        </a>
       </nav>
 
       <div class="hood-nav__right">
+        <ThemeToggle />
         <template v-if="!wallet.isConnected">
           <span
             class="hood-nav__chain"
@@ -203,16 +233,51 @@ watch(() => route.path, closeMenu);
         >
           ×
         </button>
-        <RouterLink
+        <template
           v-for="item in HOOD_NAV"
           :key="`m-${item.href}`"
-          :to="item.href"
-          class="hood-nav__mlink"
-          :class="{ 'hood-nav__link--active': isNavActive(route.path, item.href) }"
-          @click="closeMenu()"
         >
-          {{ item.label }}
-        </RouterLink>
+          <a
+            v-if="item.external"
+            :href="item.href"
+            class="nav-link-docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="closeMenu()"
+          >
+            {{ item.label }}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line
+                x1="10"
+                y1="14"
+                x2="21"
+                y2="3"
+              />
+            </svg>
+          </a>
+          <RouterLink
+            v-else
+            :to="item.href"
+            class="hood-nav__mlink"
+            :class="{ 'hood-nav__link--active': isNavActive(route.path, item.href) }"
+            @click="closeMenu()"
+          >
+            {{ item.label }}
+          </RouterLink>
+        </template>
       </div>
     </Transition>
 
@@ -229,8 +294,8 @@ watch(() => route.path, closeMenu);
   top: 28px;
   z-index: 50;
   height: 60px;
-  background: rgb(255 255 255 / 0.95);
-  backdrop-filter: blur(12px);
+  background: var(--hf-nav-bg);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--hf-border);
 }
 
@@ -248,25 +313,9 @@ watch(() => route.path, closeMenu);
 .hood-nav__logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   text-decoration: none;
   flex-shrink: 0;
 }
-
-.hood-nav__mark {
-  font-size: 1.25rem;
-  line-height: 1;
-}
-
-.hood-nav__word {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 1;
-}
-
-.hood-nav__hood { color: var(--hf-green); }
-.hood-nav__folio { color: var(--hf-ink); }
 
 .hood-nav__links {
   display: none;
@@ -281,9 +330,15 @@ watch(() => route.path, closeMenu);
   font-weight: 500;
   color: var(--hf-ink-3);
   text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
   transition: color 150ms ease, background-color 150ms ease;
+}
+
+a.hood-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .hood-nav__link:hover,
@@ -291,9 +346,34 @@ watch(() => route.path, closeMenu);
   color: var(--hf-ink);
 }
 
+.nav-link-docs {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border: 1.5px solid transparent;
+  border-radius: 9999px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hf-ink-3);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-link-docs svg {
+  margin-left: 3px;
+  margin-bottom: 1px;
+}
+
+.nav-link-docs:hover {
+  color: var(--hf-ink);
+  background: var(--hf-surface-2);
+}
+
 .hood-nav__link--active {
-  color: var(--hf-green);
-  background: var(--hf-green-bg);
+  color: var(--hf-nav-active-fg);
+  background: var(--hf-nav-active-bg);
+  font-weight: 600;
 }
 
 .hood-nav__right {
@@ -307,9 +387,13 @@ watch(() => route.path, closeMenu);
   display: none;
   align-items: center;
   gap: 6px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  background: var(--hf-green-bg);
+  color: var(--hf-green-text);
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--hf-ink-4);
+  font-weight: 600;
   cursor: help;
 }
 
@@ -341,8 +425,8 @@ watch(() => route.path, closeMenu);
   height: 32px;
   padding: 0 12px;
   border: 1px solid var(--hf-border);
-  border-radius: 8px;
-  background: var(--hf-surface);
+  border-radius: 999px;
+  background: var(--hf-btn-secondary-bg);
   color: var(--hf-ink-2);
   font-family: var(--font-mono);
   font-size: 12px;

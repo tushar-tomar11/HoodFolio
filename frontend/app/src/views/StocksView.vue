@@ -1,14 +1,19 @@
 <script setup lang="ts">
+import HfButton from '@/components/hf/HfButton.vue';
 import HfStatusCard from '@/components/hf/HfStatusCard.vue';
 import StockTable from '@/components/stocks/StockTable.vue';
 import { usePageMeta } from '@/composables/use-page-meta';
 import { SECTOR_FILTERS, SORT_OPTIONS, useStockMarkets } from '@/composables/use-stock-markets';
+import { usePriceStore } from '@/store/prices';
+import { timeAgo } from '@/utils/formatting';
 
 usePageMeta(
   'Stock Token Markets | HoodFolio',
   'Compare on-chain Robinhood Chain stock token prices vs NYSE and NASDAQ.',
 );
 
+const prices = usePriceStore();
+const now = ref(Date.now());
 const {
   rows,
   searchInput,
@@ -36,6 +41,21 @@ function onSearch(event: Event): void {
   if (target instanceof HTMLInputElement)
     setSearch(target.value);
 }
+
+const updatedLabel = computed(() => {
+  if (!prices.lastUpdated)
+    return 'Waiting for DexPaprika…';
+  return `Last updated: ${timeAgo(prices.lastUpdated, now.value)}`;
+});
+
+onMounted(() => {
+  const timer = setInterval(() => {
+    now.value = Date.now();
+  }, 1000);
+  onUnmounted(() => {
+    clearInterval(timer);
+  });
+});
 </script>
 
 <template>
@@ -48,8 +68,24 @@ function onSearch(event: Event): void {
         All tokenized equities trading 24/7 on Robinhood Chain
       </p>
       <p class="sv-note">
-        Prices from Uniswap V4 pools. Market prices from Chainlink Data Feeds (mock).
+        On-chain prices from DexPaprika. Reference prices are last-check NYSE/NASDAQ constants for premium/discount only.
       </p>
+      <div class="sv-meta">
+        <span>{{ updatedLabel }}</span>
+        <span
+          v-if="prices.isLoadingPrices"
+          class="sv-spin"
+        >
+          ↻
+        </span>
+        <HfButton
+          variant="ghost"
+          size="sm"
+          @click="prices.refreshPrices()"
+        >
+          ↻ Refresh
+        </HfButton>
+      </div>
     </header>
 
     <div class="sv-ctrl">
@@ -94,6 +130,14 @@ function onSearch(event: Event): void {
         </select>
       </label>
     </div>
+
+    <HfStatusCard
+      v-if="prices.priceError"
+      title="Couldn't load DexPaprika prices"
+      :body="prices.priceError"
+      action-label="Retry"
+      @action="prices.refreshPrices()"
+    />
 
     <div
       v-if="rows.length === 0"
@@ -156,7 +200,24 @@ function onSearch(event: Event): void {
 .sv-note {
   font-size: 12px;
   color: var(--hf-ink-4);
+  margin-bottom: 8px;
+}
+
+.sv-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--hf-ink-3);
   margin-bottom: 24px;
+}
+
+.sv-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .sv-ctrl {
@@ -190,7 +251,7 @@ function onSearch(event: Event): void {
   height: 36px;
   padding: 0 12px;
   border: 1px solid var(--hf-border);
-  border-radius: 8px;
+  border-radius: 999px;
   background: var(--hf-surface);
   font-family: var(--font-ui);
   font-size: 13px;
@@ -200,8 +261,8 @@ function onSearch(event: Event): void {
 }
 
 .sv-chip--on {
-  color: var(--hf-green);
-  background: var(--hf-green-bg);
+  color: var(--hf-nav-active-fg);
+  background: var(--hf-nav-active-bg);
   border-color: transparent;
   font-weight: 600;
 }

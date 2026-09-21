@@ -13,6 +13,7 @@ interface HoodWalletStore {
   connectors: ComputedRef<Connector[]>;
   disconnect: () => void;
   ethBalance: ComputedRef<string>;
+  ethBalanceWei: ComputedRef<bigint>;
   isConnected: Ref<boolean>;
   isConnecting: Ref<boolean>;
   isOnRobinhoodChain: ComputedRef<boolean>;
@@ -43,6 +44,8 @@ export const useWalletStore = defineStore('hoodfolio/wallet', (): HoodWalletStor
       return '';
     return `${address.value.slice(0, 6)}...${address.value.slice(-4)}`;
   });
+
+  const ethBalanceWei = computed(() => balance.value?.value ?? 0n);
 
   const ethBalance = computed(() => {
     if (!balance.value)
@@ -77,8 +80,15 @@ export const useWalletStore = defineStore('hoodfolio/wallet', (): HoodWalletStor
     disconnectWallet();
   }
 
+  function ignoreSwitchError(error: unknown): void {
+    console.error('[HoodFolio] Switch chain failed:', error);
+  }
+
   function switchToRobinhood(): void {
-    switchChain({ chainId: robinhoodChain.id });
+    switchChain(
+      { chainId: robinhoodChain.id },
+      { onError: ignoreSwitchError },
+    );
   }
 
   return {
@@ -90,6 +100,7 @@ export const useWalletStore = defineStore('hoodfolio/wallet', (): HoodWalletStor
     connectors: connectorList,
     disconnect,
     ethBalance,
+    ethBalanceWei,
     isConnected,
     isConnecting,
     isOnRobinhoodChain,

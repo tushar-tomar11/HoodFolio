@@ -1,7 +1,7 @@
 import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 import { formatUnits } from 'viem';
-import { ONCHAIN_PRICES } from '@/chain/mock-data';
 import { erc20Abi, publicClient, STOCK_TOKENS } from '@/chain/robinhood-chain';
+import { usePriceStore } from '@/store/prices';
 import { useWalletStore } from '@/store/wallet';
 import { formatTokenAmount } from '@/utils/formatting';
 
@@ -12,7 +12,7 @@ export interface TokenPosition {
   decimals: number;
   balance: number;
   formattedBalance: string;
-  valueUSD: number;
+  valueUSD: number | null;
   rawBalance: bigint;
 }
 
@@ -21,6 +21,7 @@ export interface ChainData {
   tokenPositions: ComputedRef<TokenPosition[]>;
   totalValueUSD: ComputedRef<number>;
   isLoading: DeepReadonly<Ref<boolean>>;
+  hasFetched: DeepReadonly<Ref<boolean>>;
   error: DeepReadonly<Ref<string | null>>;
   fetchBalances: (walletAddress: `0x${string}`) => Promise<void>;
   refresh: () => Promise<void>;
@@ -28,10 +29,11 @@ export interface ChainData {
 
 function createChainData(): ChainData {
   const wallet = useWalletStore();
+  const prices = usePriceStore();
   const balances = ref<Record<string, bigint>>({});
   const isLoading = shallowRef(false);
+  const hasFetched = shallowRef(false);
   const error = shallowRef<string | null>(null);
-
   const symbols = Object.keys(STOCK_TOKENS);
 
   async function fetchBalances(walletAddress: `0x${string}`): Promise<void> {
@@ -44,18 +46,14 @@ function createChainData(): ChainData {
         functionName: 'balanceOf' as const,
         args: [walletAddress] as const,
       }));
-
       const results = await publicClient.multicall({ contracts: calls, allowFailure: true });
-
-      const newBalances: Record<string, bigint> = {};
+      const next: Record<string, bigint> = {};
       symbols.forEach((symbol, i) => {
         const result = results[i];
-        if (result?.status === 'success')
-          newBalances[symbol] = result.result;
-        else
-          newBalances[symbol] = 0n;
+        next[symbol] = result?.status === 'success' ? result.result : 0n;
       });
-      balances.value = newBalances;
+      balances.value = next;
+      hasFetched.value = true;
     }
     catch (error_: unknown) {
       const message = error_ instanceof Error ? error_.message : 'Failed to fetch balances';
@@ -68,10 +66,13 @@ function createChainData(): ChainData {
   }
 
   watch(() => wallet.address, async (addr) => {
-    if (addr)
+    if (addr) {
+      hasFetched.value = false;
       await fetchBalances(addr);
-    else
-      balances.value = {};
+      return;
+    }
+    balances.value = {};
+    hasFetched.value = false;
   }, { immediate: true });
 
   async function refresh(): Promise<void> {
@@ -82,20 +83,19 @@ function createChainData(): ChainData {
   const tokenPositions = computed(() => Object.entries(STOCK_TOKENS).map(([symbol, token]) => {
     const rawBalance = balances.value[symbol] ?? 0n;
     const humanBalance = Number(formatUnits(rawBalance, token.decimals));
-    const price = ONCHAIN_PRICES[symbol] ?? 0;
-    const valueUSD = humanBalance * price;
+    const price = prices.onChainPrices.get(symbol);
     return {
       ...token,
       symbol,
       balance: humanBalance,
       formattedBalance: formatTokenAmount(rawBalance, token.decimals),
-      valueUSD,
+      valueUSD: price === undefined ? null : humanBalance * price,
       rawBalance,
     };
   }).filter(position => position.balance > 0));
 
   const totalValueUSD = computed(() =>
-    tokenPositions.value.reduce((sum, position) => sum + position.valueUSD, 0),
+    tokenPositions.value.reduce((sum, position) => sum + (position.valueUSD ?? 0), 0),
   );
 
   return {
@@ -103,6 +103,7 @@ function createChainData(): ChainData {
     tokenPositions,
     totalValueUSD,
     isLoading: readonly(isLoading),
+    hasFetched: readonly(hasFetched),
     error: readonly(error),
     fetchBalances,
     refresh,

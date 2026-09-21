@@ -2,6 +2,7 @@
 import type { Connector } from '@wagmi/vue';
 import { ROBINHOOD_RPC } from '@/chain/robinhood-chain';
 import HfButton from '@/components/hf/HfButton.vue';
+import HoodLogo from '@/components/layout/HoodLogo.vue';
 import { useWalletStore } from '@/store/wallet';
 
 const {
@@ -136,6 +137,10 @@ onUnmounted(() => {
         </button>
 
         <template v-if="mode === 'connect'">
+          <HoodLogo
+            class="hf-modal__logo"
+            height="28px"
+          />
           <h2
             id="hf-wallet-title"
             class="hf-modal__title"
@@ -169,6 +174,17 @@ onUnmounted(() => {
           >
             {{ wallet.connectError.message }}
           </p>
+          <div class="hf-modal__add-chain">
+            <HfButton
+              variant="secondary"
+              size="md"
+              full-width
+              :loading="wallet.isSwitching"
+              @click="wallet.switchToRobinhood()"
+            >
+              Add Robinhood Chain (4663)
+            </HfButton>
+          </div>
         </template>
 
         <template v-else>
@@ -205,6 +221,14 @@ onUnmounted(() => {
           >
             Switch to Robinhood Chain
           </HfButton>
+          <a
+            class="hf-modal__note"
+            href="https://robinhoodchain.blockscout.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open Blockscout explorer ↗
+          </a>
         </template>
 
         <p class="hf-modal__note">
@@ -269,6 +293,10 @@ onUnmounted(() => {
   padding-right: 28px;
 }
 
+.hf-modal__logo {
+  margin-bottom: 12px;
+}
+
 .hf-modal__sub {
   font-size: 13px;
   color: var(--hf-ink-3);
@@ -279,6 +307,10 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.hf-modal__add-chain {
+  margin-top: 12px;
 }
 
 .hf-modal__error {

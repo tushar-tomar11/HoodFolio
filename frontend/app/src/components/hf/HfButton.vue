@@ -75,7 +75,7 @@ defineSlots<{
   gap: 8px;
   font-family: var(--font-ui);
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 999px;
   border: 1px solid transparent;
   cursor: pointer;
   user-select: none;
@@ -129,9 +129,9 @@ defineSlots<{
 }
 
 .hf-btn--secondary {
-  background: var(--hf-surface);
+  background: var(--hf-btn-secondary-bg);
   color: var(--hf-ink);
-  border-color: var(--hf-border);
+  border-color: var(--hf-btn-secondary-border);
 }
 
 .hf-btn--secondary:hover:not(:disabled) {

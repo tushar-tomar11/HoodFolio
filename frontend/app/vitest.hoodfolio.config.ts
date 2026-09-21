@@ -1,0 +1,17 @@
+import { fileURLToPath } from 'node:url';
+import { defineConfig, mergeConfig } from 'vitest/config';
+import viteConfig from './vite.config.ts';
+
+export default mergeConfig(
+  viteConfig,
+  defineConfig({
+    test: {
+      environment: 'happy-dom',
+      globals: true,
+      setupFiles: ['./src/test/setup.ts'],
+      include: ['src/test/**/*.test.ts'],
+      testTimeout: 20_000,
+      root: fileURLToPath(new URL('./', import.meta.url)),
+    },
+  }),
+);

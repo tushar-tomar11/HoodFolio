@@ -6,12 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="HoodFolio — Robinhood Chain portfolio dashboard">
     <meta name="author" content="HoodFolio">
-    <link rel="shortcut icon" href="/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/hoodfolio-logo.png">
+    <link rel="icon" type="image/png" href="/hoodfolio-logo.png">
     <link rel="manifest" href="/site.webmanifest" crossorigin="use-credentials">
+    <meta property="og:title" content="HoodFolio">
+    <meta property="og:description" content="Robinhood Chain portfolio dashboard">
+    <meta property="og:image" content="/hoodfolio-logo.png">
     <title>HoodFolio</title>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('hoodfolio-theme');
+          var theme = stored === 'dark' || stored === 'light'
+            ? stored
+            : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.classList.remove('light', 'dark');
+          document.documentElement.classList.add(theme);
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+        }
+        catch (error) {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
 </head>
 
 <body>

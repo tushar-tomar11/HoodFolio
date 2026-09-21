@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { StockHolding } from '@/chain/mock-portfolio';
+import type { StockHolding } from '@/chain/portfolio-types';
 import HfPremiumBadge from '@/components/hf/HfPremiumBadge.vue';
 import StockRow from '@/components/portfolio/StockRow.vue';
-import { formatPercent, formatUSD } from '@/utils/formatting';
+import { formatUSD } from '@/utils/formatting';
 
 defineProps<{
   holdings: StockHolding[];
@@ -19,13 +19,16 @@ defineProps<{
         Premium / discount vs NYSE & NASDAQ
       </p>
     </div>
-    <div class="sh__table card sh__desktop">
+    <div
+      v-if="holdings.length > 0"
+      class="sh__table card sh__desktop"
+      data-testid="stock-holdings-table"
+    >
       <div class="sh__cols">
         <span>Symbol</span>
         <span class="col-right">Shares</span>
         <span class="col-right">On-chain</span>
         <span class="col-right">Value</span>
-        <span class="col-right">24h</span>
         <span class="col-right">Vs market</span>
       </div>
       <StockRow
@@ -52,16 +55,10 @@ defineProps<{
           <HfPremiumBadge :premium="row.premium" />
         </div>
         <p class="sh-card__val num">
-          {{ formatUSD(row.currentValueUSD) }}
+          {{ row.currentValueUSD === null ? 'Price unavailable' : formatUSD(row.currentValueUSD) }}
         </p>
         <p class="sh-card__meta num">
-          {{ row.shares }} shares · {{ formatUSD(row.onChainPrice) }}
-        </p>
-        <p
-          class="sh-card__chg num"
-          :class="row.change24hPct >= 0 ? 'price-up' : 'price-down'"
-        >
-          {{ formatPercent(row.change24hPct) }}
+          {{ row.shares }} shares · {{ row.onChainPrice === null ? '—' : formatUSD(row.onChainPrice) }}
         </p>
       </article>
     </div>
@@ -101,7 +98,7 @@ defineProps<{
 
 .sh__cols {
   display: grid;
-  grid-template-columns: minmax(160px, 1.5fr) 1fr 0.9fr 1fr 0.8fr minmax(150px, auto);
+  grid-template-columns: minmax(160px, 1.5fr) 1fr 0.9fr 1fr minmax(150px, auto);
   gap: 12px;
   padding: 10px 12px;
   min-width: 780px;

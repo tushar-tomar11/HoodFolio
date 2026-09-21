@@ -1,79 +1,84 @@
 <script setup lang="ts">
-import type { IChartApi } from 'lightweight-charts';
-import type { DailyVolumePoint } from '@/chain/mock-chain-stats';
+import { symbolForAddress } from '@/chain/robinhood-chain';
+import { formatUSDCompact } from '@/utils/formatting';
 
-const { points } = defineProps<{
-  points: DailyVolumePoint[];
+const { pools } = defineProps<{
+  pools: readonly {
+    id: string;
+    volume_usd_24h?: number;
+    tokens?: readonly { id?: string; symbol?: string }[];
+  }[];
 }>();
 
-const host = useTemplateRef<HTMLDivElement>('chartHost');
-let chart: IChartApi | undefined;
+const maxVolume = computed(() =>
+  Math.max(1, ...pools.map(pool => pool.volume_usd_24h ?? 0)),
+);
 
-function millionLabel(price: number): string {
-  return `$${price.toFixed(1)}M`;
+function pairLabel(pool: { tokens?: readonly { id?: string; symbol?: string }[] }): string {
+  const tokens = pool.tokens ?? [];
+  const a = tokens[0]?.symbol ?? symbolForAddress(tokens[0]?.id ?? '');
+  const b = tokens[1]?.symbol ?? symbolForAddress(tokens[1]?.id ?? '');
+  return `${a}/${b}`;
 }
 
-async function boot(): Promise<void> {
-  const el = host.value;
-  if (!el)
-    return;
-
-  const { ColorType, createChart, HistogramSeries } = await import('lightweight-charts');
-  const instance = createChart(el, {
-    autoSize: true,
-    height: 220,
-    layout: {
-      attributionLogo: false,
-      background: { color: '#FFFFFF', type: ColorType.Solid },
-      fontFamily: 'Inter, system-ui, sans-serif',
-      textColor: '#8A8D91',
-    },
-    grid: {
-      horzLines: { visible: false },
-      vertLines: { visible: false },
-    },
-    rightPriceScale: { borderVisible: false },
-    timeScale: { borderVisible: false },
-  });
-
-  const series = instance.addSeries(HistogramSeries, {
-    color: '#00C805',
-    priceFormat: {
-      type: 'custom',
-      formatter: millionLabel,
-      minMove: 0.1,
-    },
-  });
-
-  series.setData(points.map(point => ({
-    time: point.date,
-    value: point.volumeUSD / 1_000_000,
-  })));
-
-  instance.timeScale().fitContent();
-  chart = instance;
+function barWidth(volume: number): string {
+  return `${Math.max(4, (volume / maxVolume.value) * 100)}%`;
 }
-
-onMounted(() => {
-  boot().catch(() => undefined);
-});
-
-onUnmounted(() => {
-  chart?.remove();
-  chart = undefined;
-});
 </script>
 
 <template>
-  <div
-    ref="chartHost"
-    class="vol-chart"
-  />
+  <div class="vc">
+    <div
+      v-for="pool in pools"
+      :key="pool.id"
+      class="vc-row"
+    >
+      <span class="vc-pair">{{ pairLabel(pool) }}</span>
+      <div class="vc-track">
+        <div
+          class="vc-fill"
+          :style="{ width: barWidth(pool.volume_usd_24h ?? 0) }"
+        />
+      </div>
+      <span class="vc-vol num">{{ formatUSDCompact(pool.volume_usd_24h ?? 0) }}</span>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.vol-chart {
-  width: 100%;
-  height: 220px;
+.vc-row {
+  display: grid;
+  grid-template-columns: minmax(72px, 120px) 1fr 72px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.vc-pair {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vc-track {
+  height: 12px;
+  border-radius: 9999px;
+  background: var(--hf-surface-2);
+  overflow: hidden;
+}
+
+.vc-fill {
+  height: 100%;
+  background: var(--hf-green);
+  border-radius: 9999px;
+}
+
+.vc-vol {
+  font-size: 12px;
+  text-align: right;
+  color: var(--hf-ink-3);
 }
 </style>

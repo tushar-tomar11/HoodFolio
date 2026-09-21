@@ -1,9 +1,23 @@
 <script setup lang="ts">
-import { getTickerTokens } from '@/chain/mock-data';
 import TickerItem from '@/components/layout/TickerItem.vue';
+import { REFERENCE_MARKET_PRICES, usePriceStore } from '@/store/prices';
 
-const tokens = getTickerTokens();
+const priceStore = usePriceStore();
 const paused = ref(false);
+
+const tickerItems = computed(() =>
+  Object.keys(REFERENCE_MARKET_PRICES)
+    .filter(symbol => symbol !== 'USDG')
+    .map((symbol) => {
+      const onChainPrice = priceStore.onChainPrices.get(symbol);
+      return {
+        symbol,
+        onChainPrice: onChainPrice ?? null,
+        premium: priceStore.premiumDiscount[symbol],
+        hasData: onChainPrice !== undefined,
+      };
+    }),
+);
 </script>
 
 <template>
@@ -25,15 +39,13 @@ const paused = ref(false);
       class="ticker-track chain-ticker__track"
       :style="{ animationPlayState: paused ? 'paused' : 'running' }"
     >
-      <!-- First copy -->
       <TickerItem
-        v-for="token in tokens"
+        v-for="token in tickerItems"
         :key="`a-${token.symbol}`"
         v-bind="token"
       />
-      <!-- Second copy — identical, makes the loop seamless -->
       <TickerItem
-        v-for="token in tokens"
+        v-for="token in tickerItems"
         :key="`b-${token.symbol}`"
         v-bind="token"
       />

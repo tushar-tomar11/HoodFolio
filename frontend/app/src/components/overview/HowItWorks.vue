@@ -1,54 +1,52 @@
 <script setup lang="ts">
-const STEPS = [
-  {
-    n: '01',
-    title: 'Connect your wallet',
-    body: 'Connect MetaMask or Rabby to Robinhood Chain. HoodFolio reads your balance directly from the chain — no accounts or sign-ups needed.',
-  },
-  {
-    n: '02',
-    title: 'See your portfolio like a brokerage account',
-    body: 'Your NVDA, TSLA, and SPY holdings displayed exactly like a stock brokerage statement. Every position shows real-time P&L and the premium/discount vs NYSE price.',
-  },
-  {
-    n: '03',
-    title: 'Track premium/discount on every trade',
-    body: 'Is AAPL cheaper on Robinhood Chain than the Apple Nasdaq price? HoodFolio tells you in real time. No other tool does this.',
-  },
-];
+import { HOME_STEPS } from '@/chain/home-content';
 </script>
 
 <template>
-  <section class="hiw">
-    <div
-      v-for="step in STEPS"
-      :key="step.n"
-      class="card hiw__card"
-    >
-      <p class="hiw__n num">
-        {{ step.n }}
-      </p>
-      <h3 class="hiw__t">
-        {{ step.title }}
-      </h3>
-      <p class="hiw__b">
-        {{ step.body }}
-      </p>
+  <section
+    class="hiw"
+    aria-label="How HoodFolio works"
+  >
+    <h2 class="hiw__h">
+      How it works
+    </h2>
+    <div class="hiw__grid">
+      <article
+        v-for="step in HOME_STEPS"
+        :key="step.n"
+        class="card hiw__card"
+      >
+        <p class="hiw__n num">
+          {{ step.n }}
+        </p>
+        <h3 class="hiw__t">
+          {{ step.title }}
+        </h3>
+        <p class="hiw__b">
+          {{ step.body }}
+        </p>
+      </article>
     </div>
   </section>
 </template>
 
 <style scoped>
-.hiw {
+.hiw { margin-bottom: 56px; }
+
+.hiw__h {
+  font-family: var(--font-ui);
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.hiw__grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
-  margin-bottom: 56px;
 }
 
-.hiw__card {
-  padding: 22px 20px;
-}
+.hiw__card { padding: 22px 20px; }
 
 .hiw__n {
   font-size: 28px;
@@ -69,11 +67,18 @@ const STEPS = [
   font-size: 14px;
   line-height: 1.55;
   color: var(--hf-ink-3);
+  overflow-wrap: anywhere;
 }
 
-@media (min-width: 900px) {
-  .hiw {
-    grid-template-columns: 1fr 1fr 1fr;
+@media (min-width: 700px) {
+  .hiw__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1100px) {
+  .hiw__grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
 </style>
