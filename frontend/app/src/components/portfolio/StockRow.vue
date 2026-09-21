@@ -52,7 +52,7 @@ const valueText = computed(() =>
         {{ holding.onChainPrice === null ? '—' : formatUSD(holding.onChainPrice) }}
       </p>
       <p class="srow__sub num">
-        Ref {{ formatUSD(holding.marketPrice) }}
+        {{ holding.marketPrice === null ? 'No traditional quote' : `Quote ${formatUSD(holding.marketPrice)}` }}
       </p>
     </div>
     <div class="srow__num col-right">

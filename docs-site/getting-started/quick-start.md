@@ -5,8 +5,9 @@ Get from zero to viewing your Robinhood Chain portfolio in under 5 minutes.
 ## Step 1 — Open HoodFolio
 
 Navigate to [hoodfolio.xyz](https://hoodfolio.xyz).
-You'll see the stock ticker scrolling at the top — this is live data from
-Robinhood Chain's Uniswap pools, showing premium/discount vs NYSE prices.
+You'll see the stock ticker scrolling at the top — on-chain DexPaprika prices
+(and 24h change when DexPaprika returns it). HoodFolio is **not** Robinhood
+Markets, Inc.
 
 HoodFolio is a **read-only** dashboard. It does not custody assets, create
 accounts, or submit swaps. Everything you see is fetched from chain 4663 and
@@ -57,7 +58,8 @@ in a brokerage-style table with:
 
 - Current balance and USD value
 - 24h price change
-- Premium/Discount vs NYSE/NASDAQ price
+- On-chain 24h change from DexPaprika
+- Premium/discount only when a traditional quote API is configured
 
 If your wallet is empty, HoodFolio shows a guide to getting started
 with stock tokens on the chain. An empty portfolio is not an error —

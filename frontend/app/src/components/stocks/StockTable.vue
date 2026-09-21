@@ -20,6 +20,10 @@ const emit = defineEmits<{
   sort: [key: MarketSortKey];
 }>();
 
+const showQuotes = computed(() =>
+  rows.some(row => row.marketPrice !== null && Number.isFinite(row.marketPrice)),
+);
+
 function onSort(key: MarketSortKey): void {
   if (compact)
     return;
@@ -79,6 +83,7 @@ function changeLabel(pct: number): string {
             </button>
           </th>
           <th
+            v-if="showQuotes"
             class="col-right st-market"
             :aria-sort="ariaSort('marketPrice')"
           >
@@ -87,10 +92,11 @@ function changeLabel(pct: number): string {
               class="st-sort"
               @click="onSort('marketPrice')"
             >
-              Market Price
+              Traditional quote
             </button>
           </th>
           <th
+            v-if="showQuotes"
             class="col-right st-prem-h"
             :aria-sort="ariaSort('premium')"
           >
@@ -111,7 +117,7 @@ function changeLabel(pct: number): string {
               class="st-sort"
               @click="onSort('change24hPct')"
             >
-              24h Change
+              On-chain 24h
             </button>
           </th>
           <th
@@ -143,15 +149,25 @@ function changeLabel(pct: number): string {
           <td class="col-right mono num">
             {{ row.onChainPrice === null ? 'Price unavailable' : formatUSD(row.onChainPrice) }}
           </td>
-          <td class="col-right mono num st-market">
-            {{ formatUSD(row.marketPrice) }}
+          <td
+            v-if="showQuotes"
+            class="col-right mono num st-market"
+          >
+            {{ row.marketPrice === null ? '—' : formatUSD(row.marketPrice) }}
           </td>
-          <td class="col-right">
-            <HfPremiumBadge :premium="row.premium" />
+          <td
+            v-if="showQuotes"
+            class="col-right"
+          >
+            <HfPremiumBadge
+              v-if="Number.isFinite(row.premium)"
+              :premium="row.premium"
+            />
+            <span v-else>—</span>
           </td>
           <td
             class="col-right num st-chg"
-            :class="changeUp(row.change24hPct) ? 'price-up' : 'price-down'"
+            :class="Number.isFinite(row.change24hPct) ? (changeUp(row.change24hPct) ? 'price-up' : 'price-down') : ''"
           >
             {{ changeLabel(row.change24hPct) }}
           </td>

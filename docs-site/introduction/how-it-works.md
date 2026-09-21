@@ -18,18 +18,18 @@ by 10^6; other tokens by 10^18.
 
 ## 3. Prices and stats (DexPaprika)
 
-USD prices, 24h change, pool volume, TVL, and transaction counts come from
+USD prices, on-chain 24h change, pool volume, TVL, and transaction counts come from
 the DexPaprika REST API for network `robinhood`. The price store refreshes
 about every 30 seconds. Failures surface in the UI; they are not replaced
 with dummy candles.
 
 ## Premium / discount
 
-`(onChainUsd - referenceUsd) / referenceUsd`. References are last-check
-NYSE/NASDAQ constants, not a live exchange feed. Within 0.1% is AT PAR.
+Shown only when `/api/quotes` returns live delayed quotes (Finnhub or Twelve Data).
+Formula: `(onChainUsd - quoteUsd) / quoteUsd`. Within 0.1% is AT PAR. Not a live NYSE feed.
 
 ## What HoodFolio does not do
 
 It does not broadcast swaps, deposits, or approvals. **Trade** links open
 [Uniswap](https://app.uniswap.org/?chain=robinhood). Yield deposits open
-[Morpho](https://app.morpho.org). Advertised APY is labeled advertised.
+[Morpho](https://app.morpho.org). Morpho APY is live from Morpho or omitted.

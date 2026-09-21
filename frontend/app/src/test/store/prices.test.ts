@@ -52,25 +52,36 @@ describe('usePriceStore', () => {
   });
 
   describe('premiumDiscount computed', () => {
-    it('returns positive value when on-chain price > reference price', () => {
+    it('returns empty when traditional quotes are not configured', () => {
       const store = usePriceStore();
+      store.onChainPrices.set('NVDA', 143);
+      expect(store.premiumDiscount.NVDA).toBeUndefined();
+      expect(store.hasTraditionalQuotes).toBe(false);
+    });
+
+    it('returns positive value when on-chain price > traditional quote', () => {
+      const store = usePriceStore();
+      store.traditionalPrices.set('NVDA', 142.18);
       store.onChainPrices.set('NVDA', 143);
       expect(store.premiumDiscount.NVDA).toBeGreaterThan(0);
     });
 
-    it('returns negative value when on-chain price < reference price', () => {
+    it('returns negative value when on-chain price < traditional quote', () => {
       const store = usePriceStore();
+      store.traditionalPrices.set('NVDA', 142.18);
       store.onChainPrices.set('NVDA', 141);
       expect(store.premiumDiscount.NVDA).toBeLessThan(0);
     });
 
     it('returns empty for symbol with no on-chain price', () => {
       const store = usePriceStore();
+      store.traditionalPrices.set('NVDA', 142.18);
       expect(store.premiumDiscount.NVDA).toBeUndefined();
     });
 
     it('premium calculation is mathematically correct', () => {
       const store = usePriceStore();
+      store.traditionalPrices.set('NVDA', 142.18);
       store.onChainPrices.set('NVDA', 142.68);
       expect(store.premiumDiscount.NVDA).toBeCloseTo(0.352, 1);
     });

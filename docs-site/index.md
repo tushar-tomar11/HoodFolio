@@ -26,11 +26,11 @@ features:
 
   - icon: 📈
     title: Premium & Discount indicator
-    details: See whether each stock token is trading above (PREMIUM) or below (DISCOUNT) its NYSE/NASDAQ price. Unique to HoodFolio — no other tool on this chain shows this.
+    details: When a quote API key is set, see whether each stock token is above (PREMIUM) or below (DISCOUNT) a delayed traditional quote. Hidden until then — no frozen NYSE snapshots.
 
   - icon: 💰
     title: USDG Yield tracking
-    details: Track your USDG position in Morpho Earn — the same vault that powers Robinhood Earn. See current APY, earned yield, and days active.
+    details: Track your USDG wallet balance. Yield APY is Morpho’s live net rate for Steakhouse USDG when the API responds.
 
   - icon: ⛓️
     title: Built for Chain 4663

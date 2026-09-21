@@ -128,7 +128,7 @@ export default defineConfig({
           { text: 'DexPaprika API', link: '/data-sources/dexpaprika' },
           { text: 'Viem & RPC Reads', link: '/data-sources/viem-rpc' },
           { text: 'Blockscout Explorer', link: '/data-sources/blockscout' },
-          { text: 'Reference Prices (NYSE/NASDAQ)', link: '/data-sources/reference-prices' },
+          { text: 'Traditional quotes (optional)', link: '/data-sources/reference-prices' },
         ],
       },
       {

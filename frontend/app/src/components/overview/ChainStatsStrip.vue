@@ -11,8 +11,6 @@ const stockCount = Object.keys(STOCK_TOKENS).filter(symbol => symbol !== 'USDG')
 
 const showValues = computed(() => prices.chainStatsFetched && !prices.chainStatsError);
 
-const spark = '0,22 8,18 16,20 24,12 32,14 40,8 48,11 56,5 64,7';
-
 const stats = computed(() => [
   { id: 'liq', label: 'Pool liquidity', value: formatUSDCompact(prices.chainTvl) },
   { id: 'vol', label: '24h Volume', value: formatUSDCompact(prices.chainVolume24h) },
@@ -110,20 +108,6 @@ function onRetry(): void {
           {{ stat.label }}
         </p>
       </div>
-      <svg
-        class="stats__spark"
-        viewBox="0 0 64 28"
-        aria-hidden="true"
-      >
-        <polyline
-          :points="spark"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
     </div>
   </section>
 </template>
@@ -195,15 +179,6 @@ function onRetry(): void {
   color: var(--hf-ink-3);
 }
 
-.stats__spark {
-  display: none;
-  width: 72px;
-  height: 28px;
-  color: var(--hf-green);
-  flex-shrink: 0;
-  opacity: 0.9;
-}
-
 @media (min-width: 800px) {
   .stats {
     grid-template-columns: repeat(4, 1fr);
@@ -214,9 +189,5 @@ function onRetry(): void {
 <style>
 html.dark .stats__icon {
   display: inline-flex;
-}
-
-html.dark .stats__spark {
-  display: block;
 }
 </style>

@@ -1,6 +1,6 @@
 # HoodFolio
 
-A non-custodial portfolio dashboard for Robinhood Chain stock tokens, USDG yield, and meme coins — with a premium/discount indicator vs NYSE/NASDAQ.
+A non-custodial portfolio dashboard for Robinhood Chain stock tokens, USDG yield, and DEX stats. On-chain prices from DexPaprika; Morpho APY from Morpho’s public API. Not affiliated with Robinhood Markets, Inc.
 
 Forked from [rotki/rotki](https://github.com/rotki/rotki) (AGPL-3.0).
 
@@ -38,5 +38,7 @@ pnpm preview
 | `VITE_ROBINHOOD_RPC` | RPC URL (`https://mainnet.rpc.robinhood.com`) |
 | `VITE_BLOCK_EXPLORER` | Blockscout explorer URL |
 | `VITE_WALLETCONNECT_PROJECT_ID` | Optional WalletConnect Cloud project id |
+| `FINNHUB_API_KEY` | Server-only. Delayed traditional quotes for premium/discount. Do not use `VITE_*`. |
+| `TWELVE_DATA_API_KEY` | Server-only fallback if Finnhub is unset |
 
 Copy `frontend/app/.env.example` to `frontend/app/.env`.

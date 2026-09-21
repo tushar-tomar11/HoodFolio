@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import StockLogo from '@/components/stocks/StockLogo.vue';
-import { formatPremium } from '@/utils/formatting';
+import { formatPercent, formatPremium } from '@/utils/formatting';
 
 defineOptions({ inheritAttrs: false });
 
@@ -8,27 +8,34 @@ const {
   symbol,
   onChainPrice = null,
   premium,
+  change24hPct,
   hasData = false,
 } = defineProps<{
   symbol: string;
   onChainPrice?: number | null;
   premium?: number;
+  change24hPct?: number;
   hasData?: boolean;
 }>();
 
-const premiumLabel = computed(() => {
-  if (premium === undefined || !Number.isFinite(premium))
-    return '—';
-  return formatPremium(premium).text;
+const extraLabel = computed(() => {
+  if (premium !== undefined && Number.isFinite(premium))
+    return formatPremium(premium).text;
+  if (change24hPct !== undefined && Number.isFinite(change24hPct))
+    return `${change24hPct >= 0 ? '▲' : '▼'}${formatPercent(Math.abs(change24hPct), false)}`;
+  return '—';
 });
 
-const premiumClass = computed(() => {
-  if (premium === undefined || !Number.isFinite(premium))
+const extraClass = computed(() => {
+  if (premium !== undefined && Number.isFinite(premium)) {
+    if (premium > 0.1)
+      return 'ticker-item__prem--up';
+    if (premium < -0.1)
+      return 'ticker-item__prem--down';
     return 'ticker-item__prem--flat';
-  if (premium > 0.1)
-    return 'ticker-item__prem--up';
-  if (premium < -0.1)
-    return 'ticker-item__prem--down';
+  }
+  if (change24hPct !== undefined && Number.isFinite(change24hPct))
+    return change24hPct >= 0 ? 'ticker-item__prem--down' : 'ticker-item__prem--up';
   return 'ticker-item__prem--flat';
 });
 
@@ -49,9 +56,9 @@ const priceText = computed(() => {
     <span class="ticker-item__price">{{ priceText }}</span>
     <span
       class="ticker-item__prem"
-      :class="premiumClass"
+      :class="extraClass"
     >
-      {{ premiumLabel }}
+      {{ extraLabel }}
     </span>
     <span
       class="ticker-item__dot"

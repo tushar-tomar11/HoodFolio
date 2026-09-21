@@ -22,7 +22,15 @@ usePageMeta(
 const wallet = useWalletStore();
 const prices = usePriceStore();
 const modalOpen = ref(false);
-const homeRows = computed(() => getHomeStockRows(prices.onChainPrices));
+const homeRows = computed(() => getHomeStockRows(
+  prices.onChainPrices,
+  {},
+  {
+    change24hBySymbol: prices.change24hPct,
+    traditionalPrices: prices.traditionalPrices,
+    volumeByTokenSummary: prices.volumeUsd24h,
+  },
+));
 
 function openModal(): void {
   modalOpen.value = true;
@@ -46,8 +54,13 @@ function openModal(): void {
           Live stock token markets
         </h2>
         <p class="ov-diff__s">
-          On-chain prices from DexPaprika. PREMIUM means the token costs more on-chain
-          than the last NYSE/NASDAQ reference; DISCOUNT means cheaper; AT PAR is within 0.1%.
+          On-chain prices and 24h change from DexPaprika.
+          <template v-if="prices.hasTraditionalQuotes">
+            Premium/discount is versus delayed Finnhub last price — not a live NYSE NBBO.
+          </template>
+          <template v-else>
+            Traditional quotes and premium/discount appear only when a live quote API is configured.
+          </template>
         </p>
         <div class="card ov-diff__table">
           <StockTable

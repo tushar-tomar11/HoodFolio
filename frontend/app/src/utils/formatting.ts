@@ -84,7 +84,7 @@ export function formatTokenAmount(n: bigint, decimals = 18): string {
 }
 
 /**
- * Premium vs NYSE/NASDAQ.
+ * Premium vs a delayed traditional quote when a quote API is configured.
  * Values above 0.1 are PREMIUM (on-chain more expensive).
  * Values below -0.1 are DISCOUNT (on-chain cheaper).
  * Everything else is AT PAR.

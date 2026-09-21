@@ -25,7 +25,7 @@ export const HOME_FEATURES: HomeFeature[] = [
   },
   {
     title: 'Premium / discount',
-    body: 'See whether the on-chain price is higher or lower than the last NYSE/NASDAQ reference. Unique to HoodFolio.',
+    body: 'When a live traditional quote API is configured, compare on-chain DexPaprika prices to that delayed quote. Hidden until then — we do not use frozen NYSE snapshots.',
     to: '/stocks',
     cta: 'Compare prices',
   },
@@ -43,7 +43,7 @@ export const HOME_FEATURES: HomeFeature[] = [
   },
   {
     title: 'USDG yield',
-    body: 'Live USDG balance from chain. Advertised Morpho APY is labeled as advertised — not a vault TVL read.',
+    body: 'Live USDG balance from chain. Yield APY is Morpho’s instant net rate for Steakhouse USDG when the Morpho API responds.',
     to: '/yield',
     cta: 'USDG yield',
   },
@@ -75,7 +75,7 @@ export const HOME_STEPS: HomeStep[] = [
   {
     n: '03',
     title: 'See holdings and premium',
-    body: 'Stock tokens with balance > 0, USD value from DexPaprika, and premium/discount vs the reference NYSE/NASDAQ price.',
+    body: 'Stock tokens with balance > 0 and USD value from DexPaprika. Premium/discount only if a traditional quote feed is live.',
   },
   {
     n: '04',
@@ -100,7 +100,7 @@ export const HOME_FAQ: HomeFaqItem[] = [
   },
   {
     q: 'What does premium / discount mean?',
-    a: 'On-chain DexPaprika price versus a static NYSE/NASDAQ reference from our last check. Positive = more expensive on-chain (premium). Negative = cheaper on-chain (discount). Not a live traditional-market feed.',
+    a: 'On-chain DexPaprika price versus a delayed traditional quote when a quote API key is configured. Hidden if that feed is off. Positive = more expensive on-chain (premium). Not a live NYSE NBBO.',
   },
   {
     q: 'Is HoodFolio part of Robinhood Inc.?',

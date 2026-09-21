@@ -88,7 +88,11 @@ export function useStockMarkets(): StockMarketsModel {
   });
 
   const sourceRows = computed(() =>
-    getStockMarketRows(prices.onChainPrices, volumeBySymbol(prices.topPools)),
+    getStockMarketRows(prices.onChainPrices, volumeBySymbol(prices.topPools), {
+      change24hBySymbol: prices.change24hPct,
+      traditionalPrices: prices.traditionalPrices,
+      volumeByTokenSummary: prices.volumeUsd24h,
+    }),
   );
 
   const filtered = computed(() => {

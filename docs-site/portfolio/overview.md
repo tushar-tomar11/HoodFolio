@@ -9,7 +9,7 @@ chain 4663 for the connected address.
 - Each stock token with balance &gt; 0
 - **USDG** with 6-decimal formatting
 - USD value using DexPaprika prices
-- Premium/discount vs the stored NYSE/NASDAQ reference
+- Premium/discount only if a traditional quote API is configured
 
 Empty wallets see an onboarding card (add chain, connect, then buy on Uniswap)
 instead of fake demo holdings.

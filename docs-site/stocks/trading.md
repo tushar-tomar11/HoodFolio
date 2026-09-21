@@ -8,8 +8,8 @@ link to Uniswap with `chain=robinhood`.
 1. Wallet network is **4663**
 2. You have **ETH** for gas
 3. Token address matches [the table](/stocks/contract-addresses)
-4. You understand premium/discount vs the NYSE reference is **not** a
-   guaranteed arbitrage
+4. You understand premium/discount (when shown) is vs a delayed quote, **not**
+   guaranteed NYSE arbitrage
 
 Uniswap routing, slippage, and MEV are Uniswap's UI, not HoodFolio's.
 

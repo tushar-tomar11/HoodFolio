@@ -13,14 +13,16 @@ const barWidth = 4;
 const gap = 2;
 
 const normalizedBars = computed(() => {
-  const values = data.length > 0 ? data : [4, 8, 6, 10, 7, 12, 9, 14];
-  const max = Math.max(...values, 1);
-  return values.map(value => Math.max(3, Math.round((value / max) * (height - 2))));
+  if (data.length === 0)
+    return [];
+  const max = Math.max(...data, 1);
+  return data.map(value => Math.max(3, Math.round((value / max) * (height - 2))));
 });
 </script>
 
 <template>
   <svg
+    v-if="normalizedBars.length > 0"
     class="mini-spark"
     :width="width"
     :height="height"

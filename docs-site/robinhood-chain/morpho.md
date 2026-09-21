@@ -1,8 +1,9 @@
 # Morpho on HOOD
 
-[Morpho](https://app.morpho.org) is the Earn destination HoodFolio links for
-USDG. Vault addresses and markets can change; confirm in Morpho's UI and on
-Blockscout.
+[Steakhouse USDG](https://app.morpho.org/robinhood-chain/vault/0xBeEff033F34C046626B8D0A041844C5d1A5409dd/steakhouse-usdg)
+is the Earn destination HoodFolio links for USDG.
 
-HoodFolio's role: show wallet USDG, link out, label advertised APY.
-It is not a Morpho subgraph explorer.
+Vault: `0xBeEff033F34C046626B8D0A041844C5d1A5409dd` on chain 4663.
+
+HoodFolio’s role: show wallet USDG, fetch Morpho net APY over `/morpho-api`,
+link out. It is not a Morpho subgraph explorer and does not deposit for you.

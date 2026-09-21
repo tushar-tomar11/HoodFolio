@@ -1,16 +1,24 @@
 # Current APY
 
-HoodFolio may display an **advertised** Morpho / Earn APY on the Yield
-view. That number is **not** computed from your wallet history.
+HoodFolio reads **instant net APY** from Morpho’s public GraphQL API for the
+Steakhouse USDG vault on chain 4663:
+
+`0xBeEff033F34C046626B8D0A041844C5d1A5409dd`
+
+```graphql
+query {
+  vaultV2ByAddress(address: "0xBeEff033F34C046626B8D0A041844C5d1A5409dd", chainId: 4663) {
+    netApy
+  }
+}
+```
+
+Locally and on Vercel this is proxied as `POST /morpho-api/graphql` to avoid CORS.
 
 ## How to read it
 
-- Advertised APY is a marketing or last-known vault rate
-- It can change when Morpho updates
-- It is **not** your personal yield-to-date unless the app also reads vault
-  shares (check the Yield UI labels)
-
-If the field is missing or Morpho is unreachable, HoodFolio should not
-fabricate 5.00%. Prefer an empty or error state.
+- It is Morpho’s **vault** rate, not your personal yield-to-date
+- If Morpho is unreachable, HoodFolio shows **no number** (never a guessed ~7%)
+- Confirm deposits on [Morpho](https://app.morpho.org/robinhood-chain/vault/0xBeEff033F34C046626B8D0A041844C5d1A5409dd/steakhouse-usdg) — they may be disabled
 
 For deposits use [How to deposit](/yield/how-to-deposit).

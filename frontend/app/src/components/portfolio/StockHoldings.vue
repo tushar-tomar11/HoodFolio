@@ -16,7 +16,7 @@ defineProps<{
         Stock holdings
       </h2>
       <p class="sh__hint">
-        Premium / discount vs NYSE & NASDAQ
+        {{ holdings.some(row => Number.isFinite(row.premium)) ? 'Premium / discount vs delayed traditional quote' : 'On-chain prices from DexPaprika' }}
       </p>
     </div>
     <div
@@ -52,7 +52,11 @@ defineProps<{
               {{ row.name }}
             </p>
           </div>
-          <HfPremiumBadge :premium="row.premium" />
+          <HfPremiumBadge
+            v-if="Number.isFinite(row.premium)"
+            :premium="row.premium"
+          />
+          <span v-else>—</span>
         </div>
         <p class="sh-card__val num">
           {{ row.currentValueUSD === null ? 'Price unavailable' : formatUSD(row.currentValueUSD) }}

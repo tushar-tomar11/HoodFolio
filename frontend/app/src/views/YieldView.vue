@@ -1,22 +1,31 @@
 <script setup lang="ts">
-import { MORPHO_HOME } from '@/chain/robinhood-chain';
 import HfCard from '@/components/hf/HfCard.vue';
 import { useChainData } from '@/composables/use-chain-data';
 import { usePageMeta } from '@/composables/use-page-meta';
+import { STEAKHOUSE_USDG_APP_URL } from '@/services/morpho';
+import { usePriceStore } from '@/store/prices';
 import { useWalletStore } from '@/store/wallet';
+import { formatPercent } from '@/utils/formatting';
 
 usePageMeta(
   'USDG Yield | HoodFolio',
-  'USDG yield via Morpho on Robinhood Chain.',
+  'USDG yield via Morpho Steakhouse vault on Robinhood Chain.',
 );
 
 const wallet = useWalletStore();
 const chain = useChainData();
+const prices = usePriceStore();
 const expanded = shallowRef(false);
 
 const usdg = computed(() =>
   chain.tokenPositions.value.find(position => position.symbol === 'USDG'),
 );
+
+const apyLabel = computed(() => {
+  if (!Number.isFinite(prices.morphoApyPct))
+    return null;
+  return formatPercent(prices.morphoApyPct, false);
+});
 
 function toggleExplain(): void {
   expanded.value = !expanded.value;
@@ -30,7 +39,8 @@ function toggleExplain(): void {
         USDG Yield
       </h1>
       <p class="yv-sub">
-        Deposit USDG into Morpho on Robinhood Chain. Vault TVL is not confirmed on-chain in this app yet.
+        Steakhouse USDG on Morpho (Robinhood Chain). HoodFolio reads APY from Morpho’s public API.
+        Deposits happen on Morpho, not in this app.
       </p>
     </header>
 
@@ -39,21 +49,30 @@ function toggleExplain(): void {
       padding="lg"
     >
       <p class="yv-vault__name">
-        Morpho on Robinhood Chain
+        Steakhouse USDG
       </p>
-      <p class="yv-apy num">
-        ~7%
+      <p
+        v-if="apyLabel"
+        class="yv-apy num"
+      >
+        {{ apyLabel }}
+      </p>
+      <p
+        v-else
+        class="yv-apy yv-apy--wait num"
+      >
+        —
       </p>
       <p class="yv-dep">
-        Advertised APY — not a live vault read.
+        {{ apyLabel ? 'Net APY from Morpho (excluding rewards). Instant rate, not your personal yield.' : 'Morpho APY unavailable — no estimated rate is shown.' }}
       </p>
       <a
         class="yv-cta"
-        :href="MORPHO_HOME"
+        :href="STEAKHOUSE_USDG_APP_URL"
         target="_blank"
         rel="noopener noreferrer"
       >
-        Deposit USDG on Morpho →
+        Open Steakhouse USDG on Morpho →
       </a>
       <button
         type="button"
@@ -67,8 +86,8 @@ function toggleExplain(): void {
         class="yv-explain"
       >
         USDG is the chain stablecoin (6 decimals). HoodFolio reads your USDG
-        balance via viem multicall. We do not yet have a confirmed Morpho vault
-        address, so earned yield is not displayed.
+        balance via viem multicall. Advertised APY is Morpho’s instant net APY
+        for vault 0xBeEff…409dd. Morpho may disable deposits; confirm on their site.
       </p>
     </HfCard>
 
@@ -126,6 +145,8 @@ function toggleExplain(): void {
   font-size: 52px;
   color: var(--hf-green);
 }
+
+.yv-apy--wait { color: var(--hf-ink-4); }
 
 .yv-dep { margin-bottom: 16px; color: var(--hf-ink-3); }
 

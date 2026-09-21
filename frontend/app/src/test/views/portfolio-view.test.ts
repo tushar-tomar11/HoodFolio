@@ -172,7 +172,7 @@ describe('portfolioView', () => {
       });
       expect(wrapper.text()).toContain('$21,282');
     });
-    it('shows PremiumBadge on each holding row', () => {
+    it('shows PremiumBadge on each holding row when a quote exists', () => {
       const wrapper = mount(PortfolioView, {
         global: { stubs: { RouterLink: RouterLinkStub, WalletModal: true } },
       });

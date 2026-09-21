@@ -224,9 +224,141 @@ export async function fetchChainDexStats(): Promise<DexPaprikaDex[]> {
   return dexes;
 }
 
+export interface DexPaprikaTokenSummary {
+  address: string;
+  priceUsd: number;
+  change24hPct: number;
+  volumeUsd24h: number;
+}
+
+export interface DexPaprikaOhlcvPoint {
+  close: number;
+  time?: string;
+}
+
+function parseChange24h(summary: unknown): number {
+  if (!isRecord(summary))
+    return Number.NaN;
+  const window = summary['24h'];
+  if (!isRecord(window))
+    return Number.NaN;
+  const change = window.last_price_usd_change;
+  return typeof change === 'number' && Number.isFinite(change) ? change : Number.NaN;
+}
+
+function parseTokenSummary(address: string, data: unknown): DexPaprikaTokenSummary | undefined {
+  if (!isRecord(data))
+    return undefined;
+  const summary = data.summary;
+  const priceUsd = isRecord(summary)
+    ? (typeof summary.price_usd === 'number' ? summary.price_usd : Number.NaN)
+    : Number.NaN;
+  const volumeUsd24h = isRecord(summary) && isRecord(summary['24h'])
+    ? readNumber(summary['24h'].volume_usd)
+    : 0;
+  return {
+    address: address.toLowerCase(),
+    priceUsd,
+    change24hPct: parseChange24h(summary),
+    volumeUsd24h,
+  };
+}
+
 export async function fetchTokenData(address: string): Promise<unknown> {
   const res = await fetch(`${BASE}/networks/robinhood/tokens/${address.toLowerCase()}`);
   if (!res.ok)
     throw new Error(`DexPaprika token fetch failed: ${res.status}`);
   return res.json();
+}
+
+export async function fetchTokenSummary(address: string): Promise<DexPaprikaTokenSummary> {
+  const data = await fetchTokenData(address);
+  const parsed = parseTokenSummary(address, data);
+  if (!parsed)
+    throw new Error('DexPaprika token summary missing');
+  return parsed;
+}
+
+export async function fetchTokenSummaries(
+  tokenAddresses: Record<string, string>,
+): Promise<Map<string, DexPaprikaTokenSummary>> {
+  const result = new Map<string, DexPaprikaTokenSummary>();
+  const entries = Object.entries(tokenAddresses);
+  const CONCURRENCY = 4;
+  for (let i = 0; i < entries.length; i += CONCURRENCY) {
+    const chunk = entries.slice(i, i + CONCURRENCY);
+    const settled = await Promise.allSettled(
+      chunk.map(async ([symbol, address]) => {
+        const summary = await fetchTokenSummary(address);
+        return { symbol, summary };
+      }),
+    );
+    for (const item of settled) {
+      if (item.status === 'fulfilled')
+        result.set(item.value.symbol, item.value.summary);
+    }
+  }
+  return result;
+}
+
+function parseOhlcvClose(row: unknown): number {
+  if (typeof row === 'number' && Number.isFinite(row))
+    return row;
+  if (!isRecord(row))
+    return Number.NaN;
+  if (typeof row.close === 'number' && Number.isFinite(row.close))
+    return row.close;
+  if (typeof row.c === 'number' && Number.isFinite(row.c))
+    return row.c;
+  if (typeof row.price === 'number' && Number.isFinite(row.price))
+    return row.price;
+  return Number.NaN;
+}
+
+export async function fetchPoolOhlcvCloses(poolId: string, limit = 24): Promise<number[]> {
+  const params = new URLSearchParams({
+    interval: '1h',
+    limit: String(limit),
+  });
+  const res = await fetch(
+    `${BASE}/networks/robinhood/pools/${encodeURIComponent(poolId)}/ohlcv?${params.toString()}`,
+  );
+  if (!res.ok)
+    throw new Error(`DexPaprika OHLCV fetch failed: ${res.status}`);
+  const data: unknown = await res.json();
+  const rows = Array.isArray(data)
+    ? data
+    : isRecord(data) && Array.isArray(data.ohlcv)
+      ? data.ohlcv
+      : isRecord(data) && Array.isArray(data.data)
+        ? data.data
+        : [];
+  const closes: number[] = [];
+  for (const row of rows) {
+    const close = parseOhlcvClose(row);
+    if (Number.isFinite(close))
+      closes.push(close);
+  }
+  return closes;
+}
+
+export function primaryPoolIdBySymbol(
+  pools: DexPaprikaPool[],
+  tokenAddresses: Record<string, string>,
+): Map<string, string> {
+  const addrToSymbol = new Map(
+    Object.entries(tokenAddresses).map(([symbol, address]) => [address.toLowerCase(), symbol]),
+  );
+  const best = new Map<string, { id: string; volume: number }>();
+  for (const pool of pools) {
+    for (const token of pool.tokens) {
+      const symbol = addrToSymbol.get(token.id.toLowerCase());
+      if (!symbol)
+        continue;
+      const prev = best.get(symbol);
+      if (!prev || pool.volume_usd_24h > prev.volume)
+        best.set(symbol, { id: pool.id, volume: pool.volume_usd_24h });
+    }
+  }
+  return new Map([...best].map(([symbol, row]) => [symbol, row.id]));
 }

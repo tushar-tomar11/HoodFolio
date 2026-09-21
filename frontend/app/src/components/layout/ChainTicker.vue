@@ -1,22 +1,22 @@
 <script setup lang="ts">
+import { STOCK_TICKER_SYMBOLS } from '@/chain/robinhood-chain';
 import TickerItem from '@/components/layout/TickerItem.vue';
-import { REFERENCE_MARKET_PRICES, usePriceStore } from '@/store/prices';
+import { usePriceStore } from '@/store/prices';
 
 const priceStore = usePriceStore();
 const paused = ref(false);
 
 const tickerItems = computed(() =>
-  Object.keys(REFERENCE_MARKET_PRICES)
-    .filter(symbol => symbol !== 'USDG')
-    .map((symbol) => {
-      const onChainPrice = priceStore.onChainPrices.get(symbol);
-      return {
-        symbol,
-        onChainPrice: onChainPrice ?? null,
-        premium: priceStore.premiumDiscount[symbol],
-        hasData: onChainPrice !== undefined,
-      };
-    }),
+  STOCK_TICKER_SYMBOLS.map((symbol) => {
+    const onChainPrice = priceStore.onChainPrices.get(symbol);
+    return {
+      symbol,
+      onChainPrice: onChainPrice ?? null,
+      premium: priceStore.premiumDiscount[symbol],
+      change24hPct: priceStore.change24hPct.get(symbol),
+      hasData: onChainPrice !== undefined,
+    };
+  }),
 );
 </script>
 

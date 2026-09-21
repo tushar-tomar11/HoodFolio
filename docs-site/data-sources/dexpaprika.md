@@ -33,6 +33,23 @@ The app maps those USD amounts onto the ten stock tokens plus USDG.
 ]
 ```
 
+### Token 24h change
+
+```http
+GET https://api.dexpaprika.com/networks/robinhood/tokens/{address}
+```
+
+`summary["24h"].last_price_usd_change` is the **on-chain** 24h percent.
+HoodFolio never treats this as an NYSE session change.
+
+### Pool OHLCV
+
+```http
+GET https://api.dexpaprika.com/networks/robinhood/pools/{pool}/ohlcv?interval=1h&limit=24
+```
+
+Used for sparklines when a primary USDG pool exists. Empty history means no sparkline — never fake bars.
+
 ### Top pools by volume
 
 ```http

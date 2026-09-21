@@ -5,7 +5,7 @@ export interface StockHolding {
   currentValueUSD: number | null;
   change24hPct: number;
   onChainPrice: number | null;
-  marketPrice: number;
+  marketPrice: number | null;
   premium: number;
   tokenAddress: `0x${string}`;
   logoDomain: string;

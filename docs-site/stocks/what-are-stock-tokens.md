@@ -13,8 +13,9 @@ not by HoodFolio. HoodFolio only reads `balanceOf` and pool prices.
 ## How HoodFolio treats them
 
 Each mapped token has `symbol`, `name`, `address`, and `decimals: 18`
-in `robinhood-chain.ts`. The stocks table joins DexPaprika `price_usd`
-with a NYSE/NASDAQ **reference** to compute premium/discount.
+in `robinhood-chain.ts`. The stocks table shows DexPaprika `price_usd` and
+on-chain 24h. Premium/discount is computed only against a live delayed quote
+API, not a stored NYSE constant.
 
 ## Buying and selling
 

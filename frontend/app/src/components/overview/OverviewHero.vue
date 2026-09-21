@@ -22,8 +22,8 @@ const wallet = useWalletStore();
     </h1>
     <p class="hero__sub">
       Track tokenized stocks, USDG, and Uniswap pools on chain 4663.
-      Read-only from the chain and DexPaprika. Premium and discount versus
-      NYSE/NASDAQ reference prices — no accounts, no custody.
+      Read-only from the chain and DexPaprika. HoodFolio is not Robinhood
+      Markets, Inc. No accounts, no custody.
     </p>
     <div class="hero__cta">
       <HfButton

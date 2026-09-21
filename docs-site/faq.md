@@ -81,16 +81,17 @@ settlement and for Morpho Earn flows.
 
 ### Why is the premium/discount not exactly zero?
 
-On-chain pools trade 24/7; the reference is a last-check NYSE/NASDAQ
-constant. Liquidity and lag keep a spread. Under 0.1% shows as AT PAR.
+On-chain pools trade 24/7; traditional quotes are delayed session prices.
+Liquidity and lag keep a spread. Under 0.1% shows as AT PAR.
 
 ### Is a discount free money?
 
-No. Liquidity, issuer risk, and stale references remain. Not financial advice.
+No. Liquidity, issuer risk, and delayed quotes remain. Not financial advice.
 
-### Are reference prices live?
+### Are traditional quotes live NYSE?
 
-Not in the current app. They are periodic constants, not Chainlink.
+No. They appear only if you set `FINNHUB_API_KEY` or `TWELVE_DATA_API_KEY`
+on the server. Otherwise Market and Premium are hidden.
 
 ## Yield & Morpho {#yield}
 
@@ -98,10 +99,10 @@ Not in the current app. They are periodic constants, not Chainlink.
 
 No. It links to Morpho. Approvals and deposits are signed in that UI.
 
-### Why is APY marked advertised?
+### Where does APY come from?
 
-So you do not confuse a marketing rate with a live vault APY derived from
-your share tokens.
+Morpho’s public REST instant net APY for Steakhouse USDG. If the call fails,
+HoodFolio shows no rate.
 
 ### I deposited but Portfolio USDG did not change.
 

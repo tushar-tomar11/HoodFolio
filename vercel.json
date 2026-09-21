@@ -5,6 +5,7 @@
   "framework": "vue",
   "rewrites": [
     { "source": "/dexpaprika/:path*", "destination": "https://api.dexpaprika.com/:path*" },
+    { "source": "/morpho-api/:path*", "destination": "https://api.morpho.org/:path*" },
     { "source": "/docs", "destination": "/docs/index.html" },
     { "source": "/docs/:path*", "destination": "/docs/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }

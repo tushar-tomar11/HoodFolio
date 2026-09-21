@@ -14,8 +14,8 @@ Settlement is on-chain. Gas is **ETH**. The public RPC is
 
 Traditional brokers still handle cash equities on NYSE/NASDAQ. HoodFolio
 does **not** replace a brokerage account. It shows the **on-chain** side:
-balances via viem, prices via DexPaprika, and a premium/discount versus a
-stored NYSE/NASDAQ reference.
+balances via viem, prices via DexPaprika, Morpho APY via Morpho, and
+optional delayed traditional quotes for premium/discount.
 
 ## Why a dedicated dashboard
 

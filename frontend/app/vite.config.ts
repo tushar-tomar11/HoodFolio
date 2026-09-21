@@ -18,6 +18,7 @@ import { backendIcons } from './backend-icons.generated.ts';
 import { sharedHelperModules, vendorGroupEntries } from './scripts/chunk-groups.ts';
 import { backendIconsCachePlugin } from './scripts/extract-backend-icons.ts';
 import { hoodDocsStaticPlugin } from './scripts/serve-hood-docs.ts';
+import { hoodQuotesPlugin } from './scripts/serve-hood-quotes.ts';
 
 /*
  * The three relative imports above keep their `.ts` extension on purpose: vite 8 loads this config
@@ -84,6 +85,11 @@ const dexPaprikaProxy = {
     target: 'https://api.dexpaprika.com',
     changeOrigin: true,
     rewrite: (path: string) => path.replace(/^\/dexpaprika/, ''),
+  },
+  '^/morpho-api/': {
+    target: 'https://api.morpho.org',
+    changeOrigin: true,
+    rewrite: (path: string) => path.replace(/^\/morpho-api/, ''),
   },
 };
 
@@ -220,6 +226,7 @@ export default defineConfig({
   },
   plugins: [
     hoodDocsStaticPlugin(PROJECT_ROOT),
+    hoodQuotesPlugin(),
     backendIconsCachePlugin(PROJECT_ROOT),
     VueRouter({
       importMode: 'async',

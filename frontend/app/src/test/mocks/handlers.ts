@@ -55,4 +55,34 @@ export const handlers = [
         },
       ],
     })),
+  http.get('https://api.dexpaprika.com/networks/robinhood/tokens/:address', () =>
+    HttpResponse.json({
+      summary: {
+        price_usd: 141.88,
+        '24h': {
+          last_price_usd_change: 1.25,
+          volume_usd: 50000,
+        },
+      },
+    })),
+  http.get('https://api.dexpaprika.com/networks/robinhood/pools/:pool/ohlcv', () =>
+    HttpResponse.json([
+      { close: 140 },
+      { close: 141 },
+      { close: 142 },
+    ])),
+  http.get('https://api.morpho.org/v1/vaults-v2/:sel/apy', () =>
+    HttpResponse.json({ apy: 0.0361 })),
+  http.get('https://api.morpho.org/v0/vaults-v2/:sel/apy', () =>
+    HttpResponse.json({ apy: 0.0361 })),
+  http.post('https://api.morpho.org/graphql', () =>
+    HttpResponse.json({
+      data: {
+        vaultV2ByAddress: {
+          address: '0xBeEff033F34C046626B8D0A041844C5d1A5409dd',
+          apy: 0.0361,
+          netApy: 0.0361,
+        },
+      },
+    })),
 ];

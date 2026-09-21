@@ -10,12 +10,12 @@ const formatted = computed(() => formatPremium(premium));
 const tooltip = computed(() => {
   const n = Math.abs(premium).toFixed(2);
   if (formatted.value.type === 'premium') {
-    return `This stock costs more on Robinhood Chain than on NYSE/NASDAQ. You're paying ${n}% extra vs traditional market price.`;
+    return `On-chain DexPaprika price is ${n}% above the delayed Finnhub last price (not a live NYSE NBBO).`;
   }
   if (formatted.value.type === 'discount') {
-    return `This stock costs less on Robinhood Chain than on NYSE/NASDAQ. You're getting a ${n}% deal vs traditional market price.`;
+    return `On-chain DexPaprika price is ${n}% below the delayed Finnhub last price (not a live NYSE NBBO).`;
   }
-  return 'This stock is trading in line with its NYSE/NASDAQ price.';
+  return 'On-chain DexPaprika price is within 0.1% of the delayed Finnhub last price.';
 });
 </script>
 

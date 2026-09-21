@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MORPHO_HOME, ROBINHOOD_EXPLORER, STOCK_TOKENS, UNISWAP_HOME } from '@/chain/robinhood-chain';
+import { ROBINHOOD_EXPLORER, STOCK_TOKENS, UNISWAP_HOME } from '@/chain/robinhood-chain';
 import HfButton from '@/components/hf/HfButton.vue';
 import HfSkeleton from '@/components/hf/HfSkeleton.vue';
 import HfStatusCard from '@/components/hf/HfStatusCard.vue';
@@ -9,8 +9,10 @@ import WalletModal from '@/components/wallet/WalletModal.vue';
 import { usePageMeta } from '@/composables/use-page-meta';
 import { usePortfolioPage } from '@/composables/use-portfolio-page';
 import { useToast } from '@/composables/use-toast';
+import { STEAKHOUSE_USDG_APP_URL } from '@/services/morpho';
+import { usePriceStore } from '@/store/prices';
 import { useWalletStore } from '@/store/wallet';
-import { formatTokenAmount } from '@/utils/formatting';
+import { formatPercent, formatTokenAmount } from '@/utils/formatting';
 
 usePageMeta(
   'My Portfolio | HoodFolio',
@@ -39,7 +41,14 @@ const {
   usdgBalance,
   usdgFormatted,
 } = usePortfolioPage();
+const prices = usePriceStore();
 const modalOpen = ref(false);
+
+const morphoYieldHint = computed(() => {
+  if (Number.isFinite(prices.morphoApyPct))
+    return `Steakhouse USDG on Morpho currently shows ${formatPercent(prices.morphoApyPct, false)} net APY (Morpho, excl. rewards).`;
+  return 'Deposit USDG into Morpho’s Steakhouse vault on Robinhood Chain. APY is shown only when Morpho’s API responds.';
+});
 
 function openModal(): void {
   modalOpen.value = true;
@@ -160,15 +169,15 @@ const ethFormatted = computed(() => formatTokenAmount(ethBalanceWei.value, 18));
             USDG Balance: {{ usdgFormatted }} USDG
           </p>
           <p class="pf-other__p">
-            Earn ~7% APY by depositing USDG into Morpho on Robinhood Chain.
+            {{ morphoYieldHint }}
           </p>
           <a
             class="pf-other__a"
-            :href="MORPHO_HOME"
+            :href="STEAKHOUSE_USDG_APP_URL"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Deposit on Morpho ↗
+            Open Steakhouse USDG on Morpho ↗
           </a>
           <p class="pf-note">
             Balance read live from Chain 4663 via viem multicall.

@@ -9,7 +9,7 @@ import { timeAgo } from '@/utils/formatting';
 
 usePageMeta(
   'Stock Token Markets | HoodFolio',
-  'Compare on-chain Robinhood Chain stock token prices vs NYSE and NASDAQ.',
+  'On-chain Robinhood Chain stock token prices from DexPaprika.',
 );
 
 const prices = usePriceStore();
@@ -48,6 +48,12 @@ const updatedLabel = computed(() => {
   return `Last updated: ${timeAgo(prices.lastUpdated, now.value)}`;
 });
 
+const visibleSortOptions = computed(() =>
+  prices.hasTraditionalQuotes
+    ? SORT_OPTIONS
+    : SORT_OPTIONS.filter(item => item.id !== 'premium'),
+);
+
 onMounted(() => {
   const timer = setInterval(() => {
     now.value = Date.now();
@@ -68,7 +74,13 @@ onMounted(() => {
         All tokenized equities trading 24/7 on Robinhood Chain
       </p>
       <p class="sv-note">
-        On-chain prices from DexPaprika. Reference prices are last-check NYSE/NASDAQ constants for premium/discount only.
+        On-chain prices and 24h change from DexPaprika.
+        <template v-if="prices.hasTraditionalQuotes">
+          Traditional quotes are delayed Finnhub last prices. Premium/discount is on-chain vs that quote — not a live NYSE NBBO.
+        </template>
+        <template v-else>
+          Traditional quotes (and premium/discount) appear only when a live quote API is configured — never from a frozen snapshot.
+        </template>
       </p>
       <div class="sv-meta">
         <span>{{ updatedLabel }}</span>
@@ -121,7 +133,7 @@ onMounted(() => {
           @change="onDropdown($event)"
         >
           <option
-            v-for="opt in SORT_OPTIONS"
+            v-for="opt in visibleSortOptions"
             :key="opt.id"
             :value="opt.id"
           >
@@ -167,10 +179,9 @@ onMounted(() => {
         💡 What is Premium/Discount?
       </p>
       <p class="sv-help-p">
-        When you buy a stock token on Robinhood Chain, you pay the on-chain price —
-        not the NYSE price. If on-chain is $142.18 but NYSE is $142.50, you're getting
-        a 0.23% discount. The chain's price may differ due to liquidity, market hours,
-        and arbitrage lag.
+        Premium and discount appear only when HoodFolio has a live traditional quote
+        (delayed Finnhub or Twelve Data). They compare the on-chain DexPaprika price
+        to that quote — not a live NYSE NBBO. On-chain 24h change is always DexPaprika.
       </p>
     </div>
   </div>

@@ -1,6 +1,5 @@
 import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 import { STOCK_LOGO_DOMAINS, type StockHolding } from '@/chain/portfolio-types';
-import { REFERENCE_MARKET_PRICES } from '@/chain/reference-prices';
 import { type TokenPosition, useChainData } from '@/composables/use-chain-data';
 import { usePriceStore } from '@/store/prices';
 import { useWalletStore } from '@/store/wallet';
@@ -22,16 +21,15 @@ export interface PortfolioPageModel {
   emptyKind: ComputedRef<PortfolioEmptyKind>;
 }
 
-function toHolding(position: TokenPosition, onChainPrice: number | undefined, premium: number | undefined): StockHolding {
-  const marketPrice = REFERENCE_MARKET_PRICES[position.symbol] ?? 0;
+function toHolding(position: TokenPosition, onChainPrice: number | undefined, premium: number | undefined, marketPrice: number | undefined, change24hPct: number | undefined): StockHolding {
   return {
     symbol: position.symbol,
     name: position.name,
     shares: position.balance,
     currentValueUSD: position.valueUSD,
-    change24hPct: Number.NaN,
+    change24hPct: change24hPct ?? Number.NaN,
     onChainPrice: onChainPrice ?? null,
-    marketPrice,
+    marketPrice: marketPrice ?? null,
     premium: premium ?? Number.NaN,
     tokenAddress: position.address,
     logoDomain: STOCK_LOGO_DOMAINS[position.symbol] ?? '',
@@ -50,6 +48,8 @@ export function usePortfolioPage(): PortfolioPageModel {
         position,
         prices.onChainPrices.get(position.symbol),
         prices.premiumDiscount[position.symbol],
+        prices.traditionalPrices.get(position.symbol),
+        prices.change24hPct.get(position.symbol),
       )),
   );
 
@@ -89,8 +89,8 @@ export function usePortfolioPage(): PortfolioPageModel {
     refresh,
     stockHoldings,
     totalValueUSD,
-    usdgBalance,
     usdgFormatted,
+    usdgBalance,
     emptyKind,
   };
 }

@@ -3,9 +3,9 @@
 This page is the **markets** view of the same formula documented in
 [Portfolio → Premium & Discount](/portfolio/premium-discount).
 
-On **Stocks**, every mapped equity shows on-chain USD (DexPaprika) next to
-the stored NYSE/NASDAQ reference. The ticker at the top of the app repeats
-the badge so you can scan NVDA, TSLA, and AAPL without opening the table.
+On **Stocks**, every mapped equity shows on-chain USD (DexPaprika) and
+**on-chain 24h** from DexPaprika. Traditional quote and premium/discount
+columns appear only when `/api/quotes` has a Finnhub or Twelve Data key.
 
 ## Using it to trade
 
@@ -18,5 +18,4 @@ broken — weekend trading often gaps.
 If `abs(premium) < 0.1%` HoodFolio prints AT PAR in grey. That threshold
 is a product choice, not an exchange rule.
 
-References are **not** Chainlink in the current build. See
-[Reference prices](/data-sources/reference-prices).
+See [Traditional quotes](/data-sources/reference-prices).

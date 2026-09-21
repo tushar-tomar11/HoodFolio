@@ -121,6 +121,7 @@ const {
     </div>
 
     <MiniSparkline
+      v-if="sparkline.length > 0"
       class="stat-card-sparkline"
       :data="sparkline"
     />

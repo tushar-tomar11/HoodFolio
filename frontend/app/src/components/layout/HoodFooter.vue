@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import HoodLogo from '@/components/layout/HoodLogo.vue';
 import { HOOD_NAV } from '@/components/layout/nav-items';
+import { usePriceStore } from '@/store/prices';
+
+const prices = usePriceStore();
+
+const quoteSourceLine = computed(() => {
+  if (prices.hasTraditionalQuotes)
+    return 'Traditional quotes: delayed Finnhub last price.';
+  return 'Traditional quotes: only if a quote API key is configured.';
+});
 </script>
 
 <template>
@@ -20,7 +29,8 @@ import { HOOD_NAV } from '@/components/layout/nav-items';
           Non-custodial · Read-only · Forked from rotki
         </p>
         <p class="hood-footer__meta">
-          Chain 4663 · ETH gas · Arbitrum L2
+          On-chain prices: DexPaprika. Portfolio: your wallet + RPC.
+          Yield APY: Morpho (when loaded). {{ quoteSourceLine }}
         </p>
       </div>
 
@@ -102,8 +112,7 @@ import { HOOD_NAV } from '@/components/layout/nav-items';
     </div>
 
     <p class="hood-footer__legal">
-      HoodFolio © 2026 · Forked from rotki (AGPL-3.0) · Not financial advice ·
-      Premium/discount data is informational only
+      HoodFolio © 2026 · Forked from rotki (AGPL-3.0) · Not Robinhood Markets, Inc. · Not financial advice
     </p>
   </footer>
 </template>

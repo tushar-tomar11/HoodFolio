@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchAllStockPrices, fetchTokenPrices, fetchTopPools } from '@/services/dex-paprika';
+import { fetchAllStockPrices, fetchTokenPrices, fetchTokenSummary, fetchTopPools } from '@/services/dex-paprika';
 import { NVDA } from '../mocks/handlers';
 import { server } from '../mocks/server';
 
@@ -100,6 +100,14 @@ describe('dexPaprika Service', () => {
     it('pools are sorted by volume_usd_24h descending', async () => {
       const pools = await fetchTopPools(5);
       expect(pools[0].volume_usd_24h).toBeGreaterThanOrEqual(pools[1].volume_usd_24h);
+    });
+  });
+
+  describe('fetchTokenSummary', () => {
+    it('reads on-chain 24h change from DexPaprika token details', async () => {
+      const summary = await fetchTokenSummary(NVDA);
+      expect(summary.change24hPct).toBe(1.25);
+      expect(summary.volumeUsd24h).toBe(50000);
     });
   });
 });
