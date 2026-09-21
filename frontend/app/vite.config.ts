@@ -17,6 +17,7 @@ import VueRouter from 'vue-router/vite';
 import { backendIcons } from './backend-icons.generated.ts';
 import { sharedHelperModules, vendorGroupEntries } from './scripts/chunk-groups.ts';
 import { backendIconsCachePlugin } from './scripts/extract-backend-icons.ts';
+import { hoodDocsStaticPlugin } from './scripts/serve-hood-docs.ts';
 
 /*
  * The three relative imports above keep their `.ts` extension on purpose: vite 8 loads this config
@@ -218,6 +219,7 @@ export default defineConfig({
     ],
   },
   plugins: [
+    hoodDocsStaticPlugin(PROJECT_ROOT),
     backendIconsCachePlugin(PROJECT_ROOT),
     VueRouter({
       importMode: 'async',

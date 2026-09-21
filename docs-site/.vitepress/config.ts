@@ -4,6 +4,7 @@ export default defineConfig({
   title: 'HoodFolio',
   description: 'The first portfolio dashboard for Robinhood Chain. Track tokenized stocks, USDG yield, and meme coin positions. Non-custodial, open source, reads directly from Chain 4663.',
   lang: 'en-US',
+  base: '/docs/',
   srcDir: '.',
   outDir: './.vitepress/dist',
   lastUpdated: true,
@@ -13,7 +14,7 @@ export default defineConfig({
     /^https?:\/\/localhost/,
   ],
   head: [
-    ['link', { rel: 'icon', href: '/favicon.svg' }],
+    ['link', { rel: 'icon', href: '/docs/favicon.svg' }],
     ['meta', { name: 'theme-color', content: '#00C805' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'HoodFolio Documentation' }],
