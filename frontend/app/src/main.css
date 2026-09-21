@@ -104,14 +104,29 @@
   --shadow-raised: 0 4px 16px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.04);
   --shadow-modal:  0 20px 60px rgba(0,0,0,0.14), 0 8px 20px rgba(0,0,0,0.06);
   --shadow-green:  0 4px 20px rgba(0, 200, 5, 0.25);
+
+  /* ── Stat cards (flat in light) ── */
+  --hf-stat-bg: #FFFFFF;
+  --hf-stat-border: #E2E3EB;
+  --hf-stat-icon-bg: #EFF0F5;
+  --hf-stat-num: #1A1A1E;
+  --hf-stat-label: #62626B;
+
+  /* Kill rotki indigo (#4e5ba6) so leftover Rui widgets match docs green */
+  --rui-light-primary: 0, 200, 5;
+  --rui-light-primary-main: 0, 200, 5;
+  --rui-dark-primary: 0, 200, 5;
+  --rui-dark-primary-main: 0, 200, 5;
 }
 
+html.dark,
 html[data-theme="dark"] {
   color-scheme: dark;
-  --hf-bg:         #070A08;
-  --hf-surface:    #121614;
-  --hf-surface-2:  #1A1F1C;
-  --hf-surface-3:  #242A26;
+  filter: none !important;
+  --hf-bg:         #080D08;
+  --hf-surface:    #0C130C;
+  --hf-surface-2:  #131F13;
+  --hf-surface-3:  #1E2E1E;
   --hf-green-bg:   #0C2810;
   --hf-green-text: #5DFF62;
   --hf-red-bg:     #2A1010;
@@ -123,28 +138,56 @@ html[data-theme="dark"] {
   --hf-ink-2:      #D2D2D8;
   --hf-ink-3:      #9A9AA6;
   --hf-ink-4:      #6E6E7A;
-  --hf-border:     #243028;
-  --hf-border-2:   #334038;
+  --hf-border:     #1E2E1E;
+  --hf-border-2:   #2A3F2A;
   --hf-ticker-bg:  #050505;
-  --hf-nav-bg:     rgb(7 10 8 / 0.94);
+  --hf-nav-bg:     rgb(8 13 8 / 0.95);
   --hf-hero-image: url('/hero/hero-dark.jpg');
   --hf-nav-active-bg: #00C805;
-  --hf-nav-active-fg: #070A08;
+  --hf-nav-active-fg: #080D08;
   --hf-btn-secondary-bg: rgb(8 12 10 / 0.55);
   --hf-btn-secondary-border: rgb(255 255 255 / 0.18);
   --shadow-card:   0 1px 3px rgba(0, 0, 0, 0.45);
   --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.4);
   --shadow-modal:  0 20px 60px rgba(0, 0, 0, 0.55);
   --shadow-green:  0 4px 18px rgba(0, 200, 5, 0.28);
+  --hf-stat-bg: #0C130C;
+  --hf-stat-border: #1E2E1E;
+  --hf-stat-icon-bg: #131F13;
+  --hf-stat-num: #F3F3F6;
+  --hf-stat-label: #9A9AA6;
+}
+
+html.dark .slo--invert {
+  background: #101114;
+  border-color: transparent;
+}
+
+html.dark .slo--invert img {
+  filter: invert(1);
+}
+
+html.dark .slo--light:not(.slo--invert) {
+  background: var(--hf-surface-2);
 }
 
 /* ── Global Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; font-size: 16px; background: var(--hf-bg); color: var(--hf-ink); }
+html,
+body,
+#hoodfolio {
+  background: var(--hf-bg) !important;
+  color: var(--hf-ink) !important;
+}
+
 body {
   margin: 0;
-  background: var(--hf-bg);
-  color: var(--hf-ink);
+}
+
+/* After Tailwind base `a { text-rui-blue-800 }` — class-colored links still win */
+a {
+  color: inherit;
 }
 
 /* ── Scrollbars — thin, green on hover ── */

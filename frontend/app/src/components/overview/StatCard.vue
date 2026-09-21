@@ -139,6 +139,7 @@ const {
 }
 
 .stat-card-icon {
+  display: none;
   width: 40px;
   height: 40px;
   border-radius: 10px;
@@ -146,6 +147,13 @@ const {
   align-items: center;
   justify-content: center;
   color: var(--hf-green);
+  flex-shrink: 0;
+}
+
+.stat-card-sparkline {
+  display: none;
+  width: 60px;
+  height: 32px;
   flex-shrink: 0;
 }
 
@@ -169,10 +177,14 @@ const {
   color: var(--hf-stat-label);
   font-weight: 500;
 }
+</style>
 
-.stat-card-sparkline {
-  width: 60px;
-  height: 32px;
-  flex-shrink: 0;
+<style>
+html.dark .stat-card-icon {
+  display: inline-flex;
+}
+
+html.dark .stat-card-sparkline {
+  display: block;
 }
 </style>

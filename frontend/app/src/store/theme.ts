@@ -1,4 +1,5 @@
 import type { ComputedRef, Ref } from 'vue';
+import { ThemeMode, useRotkiTheme } from '@rotki/ui-library';
 import { defineStore } from 'pinia';
 
 export type HoodTheme = 'light' | 'dark';
@@ -16,12 +17,25 @@ export function readStoredTheme(): HoodTheme {
   return prefersDark() ? 'dark' : 'light';
 }
 
+function syncRotkiTheme(theme: HoodTheme): void {
+  try {
+    const { switchThemeScheme } = useRotkiTheme();
+    switchThemeScheme(theme === 'dark' ? ThemeMode.dark : ThemeMode.light);
+  }
+  catch {
+    // Pinia unit tests and pre-plugin boot have no Rui app context.
+  }
+}
+
+/** VitePress-style: only `html.dark` for dark. Never add `html.light` (rotki paints indigo). */
 export function applyHoodTheme(theme: HoodTheme): void {
   const html = document.documentElement;
   html.classList.remove('light', 'dark');
-  html.classList.add(theme);
+  if (theme === 'dark')
+    html.classList.add('dark');
   html.dataset.theme = theme;
   html.style.colorScheme = theme;
+  html.style.filter = 'none';
   localStorage.setItem(HOOD_THEME_KEY, theme);
 }
 
@@ -49,6 +63,9 @@ export const useThemeStore = defineStore('hoodfolio/theme', (): ThemeStore => {
 
   function setTheme(next: HoodTheme): void {
     theme.value = next;
+    applyHoodTheme(next);
+    syncRotkiTheme(next);
+    // Rui light mode re-adds `html.light` (indigo wash). Restore VitePress-style classes.
     applyHoodTheme(next);
   }
 

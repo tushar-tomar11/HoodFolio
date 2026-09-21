@@ -209,12 +209,14 @@ function onRetry(): void {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+</style>
 
-:global(html[data-theme="dark"]) .stats__icon {
+<style>
+html.dark .stats__icon {
   display: inline-flex;
 }
 
-:global(html[data-theme="dark"]) .stats__spark {
+html.dark .stats__spark {
   display: block;
 }
 </style>

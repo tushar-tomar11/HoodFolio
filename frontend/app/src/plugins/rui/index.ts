@@ -12,12 +12,18 @@ interface RuiPlugin {
   install: (app: App) => void;
 }
 
+function initialRuiMode(): ThemeMode {
+  if (typeof document !== 'undefined' && document.documentElement.classList.contains('dark'))
+    return ThemeMode.dark;
+  return ThemeMode.light;
+}
+
 export function createRuiPlugin(defaults: Partial<RuiOptions['defaults']>): RuiPlugin {
   return createRui({
     defaults,
     theme: {
       icons: [...detectedIcons, ...brandIcons],
-      mode: ThemeMode.light,
+      mode: initialRuiMode(),
     },
   });
 }

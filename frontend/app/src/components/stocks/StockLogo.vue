@@ -73,17 +73,4 @@ function onError(): void {
   object-fit: contain;
   display: block;
 }
-
-:global(html[data-theme="dark"]) .slo--invert {
-  background: #101114;
-  border-color: transparent;
-}
-
-:global(html[data-theme="dark"]) .slo--invert img {
-  filter: invert(1);
-}
-
-:global(html[data-theme="dark"]) .slo--light:not(.slo--invert) {
-  background: var(--hf-surface-2);
-}
 </style>

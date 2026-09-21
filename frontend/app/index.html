@@ -22,14 +22,15 @@
             ? stored
             : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
           document.documentElement.classList.remove('light', 'dark');
-          document.documentElement.classList.add(theme);
+          if (theme === 'dark')
+            document.documentElement.classList.add('dark');
           document.documentElement.setAttribute('data-theme', theme);
           document.documentElement.style.colorScheme = theme;
         }
         catch (error) {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.classList.add('light');
+          document.documentElement.classList.remove('light', 'dark');
           document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.style.colorScheme = 'light';
         }
       })();
     </script>

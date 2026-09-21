@@ -21,5 +21,8 @@ describe('theme store', () => {
     store.toggleTheme();
     expect(store.theme).toBe('light');
     expect(localStorage.getItem(HOOD_THEME_KEY)).toBe('light');
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+    expect(document.documentElement.classList.contains('light')).toBe(false);
+    expect(document.documentElement.dataset.theme).toBe('light');
   });
 });
