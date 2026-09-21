@@ -1,7 +1,10 @@
 {
-  "installCommand": "pnpm --dir frontend install",
+  "installCommand": "corepack enable && corepack prepare pnpm@12.2.1 --activate && pnpm --dir frontend install",
   "buildCommand": "pnpm --dir frontend/app exec tsx scripts/build.ts --renderer-only",
   "outputDirectory": "frontend/app/dist",
   "framework": "vue",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/dexpaprika/:path*", "destination": "https://api.dexpaprika.com/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
