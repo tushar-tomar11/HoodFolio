@@ -1,5 +1,5 @@
 {
-  "installCommand": "corepack enable && corepack prepare pnpm@12.2.1 --activate && pnpm --dir frontend install",
+  "installCommand": "sh scripts/vercel-install.sh",
   "buildCommand": "pnpm --dir frontend/app exec tsx scripts/build.ts --renderer-only",
   "outputDirectory": "frontend/app/dist",
   "framework": "vue",
