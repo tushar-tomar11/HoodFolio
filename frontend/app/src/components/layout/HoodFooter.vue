@@ -97,15 +97,6 @@ import { HOOD_NAV } from '@/components/layout/nav-items';
               Uniswap on Robinhood Chain ↗
             </a>
           </li>
-          <li>
-            <a
-              href="https://docs.hoodfolio.xyz"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Documentation ↗
-            </a>
-          </li>
         </ul>
       </div>
     </div>

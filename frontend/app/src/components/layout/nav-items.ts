@@ -4,7 +4,8 @@ export interface HoodNavItem {
   external?: boolean;
 }
 
-export const HOOD_DOCS_URL = 'https://docs.hoodfolio.xyz';
+/** Same-origin path as other nav items; opened in a new tab via `<a target="_blank">`. */
+export const HOOD_DOCS_URL = '/docs';
 
 export const HOOD_NAV: HoodNavItem[] = [
   { label: 'Overview', href: '/' },

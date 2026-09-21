@@ -27,6 +27,10 @@ async function loadAnalytics(): Promise<Component> {
   return (await import('@/views/AnalyticsView.vue')).default;
 }
 
+async function loadDocs(): Promise<Component> {
+  return (await import('@/views/DocsView.vue')).default;
+}
+
 async function loadNotFound(): Promise<Component> {
   return (await import('@/views/NotFoundView.vue')).default;
 }
@@ -40,6 +44,7 @@ export const router = createRouter({
     { path: '/memecoins', name: 'memecoins', component: loadMemecoins, meta: { title: 'Meme Coins' } },
     { path: '/yield', name: 'yield', component: loadYield, meta: { title: 'Yield' } },
     { path: '/analytics', name: 'analytics', component: loadAnalytics, meta: { title: 'Analytics' } },
+    { path: '/docs', name: 'docs', component: loadDocs, meta: { title: 'Documentation' } },
     { path: '/:pathMatch(.*)*', name: '404', component: loadNotFound, meta: { title: 'Not found' } },
   ],
   scrollBehavior: (to) => {
@@ -57,6 +62,7 @@ router.beforeEach((to) => {
     memecoins: 'Meme Coin Leaderboard | HoodFolio',
     yield: 'USDG Yield | HoodFolio',
     analytics: 'Chain Analytics | HoodFolio',
+    docs: 'Documentation | HoodFolio',
     404: '404 — Page Not Found | HoodFolio',
   };
   const name = typeof to.name === 'string' ? to.name : 'overview';
