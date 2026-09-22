@@ -39,7 +39,7 @@ export default defineConfig({
       },
     ],
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/yourusername/hoodfolio' },
+      { icon: 'github', link: 'https://github.com/tushar-tomar11/HoodFolio' },
       { icon: 'x', link: 'https://x.com/hoodfolio' },
     ],
     search: {
@@ -173,7 +173,7 @@ export default defineConfig({
       },
     ],
     editLink: {
-      pattern: 'https://github.com/yourusername/hoodfolio/edit/main/docs-site/:path',
+      pattern: 'https://github.com/tushar-tomar11/HoodFolio/edit/main/docs-site/:path',
       text: 'Edit this page on GitHub',
     },
     footer: {

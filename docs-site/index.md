@@ -5,19 +5,10 @@ hero:
   name: "HoodFolio"
   text: "Portfolio dashboard for Robinhood Chain"
   tagline: "Track tokenized stocks, USDG yield, and meme coins. Non-custodial, read-only, open source."
-  image:
-    src: /hero-preview.png
-    alt: HoodFolio dashboard preview
   actions:
     - theme: brand
       text: Quick Start →
       link: /getting-started/quick-start
-    - theme: alt
-      text: View on GitHub
-      link: https://github.com/yourusername/hoodfolio
-    - theme: alt
-      text: Open App
-      link: https://hoodfolio.xyz
 
 features:
   - icon: 📊

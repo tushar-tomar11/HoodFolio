@@ -12,7 +12,7 @@
 The product UI lives in the rotki-style workspace:
 
 ```bash
-git clone https://github.com/yourusername/hoodfolio.git
+git clone https://github.com/tushar-tomar11/HoodFolio.git
 cd hoodfolio/frontend
 pnpm install
 ```
