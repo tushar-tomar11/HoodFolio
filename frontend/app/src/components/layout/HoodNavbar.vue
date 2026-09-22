@@ -72,7 +72,7 @@ watch(() => route.path, closeMenu);
         class="hood-nav__logo"
         @click="closeMenu()"
       >
-        <HoodLogo height="36px" />
+        <HoodLogo height="44px" />
       </RouterLink>
 
       <nav

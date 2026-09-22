@@ -29,7 +29,6 @@ export default defineConfig({
     siteTitle: 'HoodFolio',
     nav: [
       { text: 'Documentation', link: '/' },
-      { text: 'App', link: 'https://hoodfolio.xyz', target: '_blank' },
       {
         text: 'v1.0',
         items: [

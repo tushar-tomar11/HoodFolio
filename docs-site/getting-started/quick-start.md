@@ -4,7 +4,7 @@ Get from zero to viewing your Robinhood Chain portfolio in under 5 minutes.
 
 ## Step 1 — Open HoodFolio
 
-Navigate to [hoodfolio.xyz](https://hoodfolio.xyz).
+Navigate to [hoodfolio.online](https://hoodfolio.online).
 You'll see the stock ticker scrolling at the top — on-chain DexPaprika prices
 (and 24h change when DexPaprika returns it). HoodFolio is **not** Robinhood
 Markets, Inc.

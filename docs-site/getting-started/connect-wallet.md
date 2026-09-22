@@ -32,7 +32,7 @@ RPC and DexPaprika.
 
 ## Troubleshooting
 
-- Popup blocked — allow popups for hoodfolio.xyz
+- Popup blocked — allow popups for hoodfolio.online
 - Multiple wallets — disable extra extensions or pick one in the modal
 - Zero ETH — you may still have stock tokens; ETH is only gas. See
   [Bridge ETH](/getting-started/bridge)

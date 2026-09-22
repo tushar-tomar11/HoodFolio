@@ -20,7 +20,7 @@ const quoteSourceLine = computed(() => {
           to="/"
           class="hood-footer__brand"
         >
-          <HoodLogo height="36px" />
+          <HoodLogo height="44px" />
         </RouterLink>
         <p class="hood-footer__tag">
           Your Robinhood Chain Portfolio, On-Chain.

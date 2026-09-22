@@ -6,18 +6,25 @@ const {
   variant?: 'lockup' | 'mark';
   height?: string;
 }>();
-
-const lockupSrc = '/hoodfolio-logo.png';
 </script>
 
 <template>
-  <img
+  <span
     v-if="variant === 'lockup'"
-    :src="lockupSrc"
-    alt="HoodFolio"
-    class="hood-logo"
+    class="hood-logo-wrap"
     :style="{ height }"
-  />
+  >
+    <img
+      src="/hoodfolio-logo.png"
+      alt="HoodFolio"
+      class="hood-logo hood-logo--light"
+    >
+    <img
+      src="/hoodfolio-logo-dark.png"
+      alt=""
+      class="hood-logo hood-logo--dark"
+    >
+  </span>
   <svg
     v-else
     class="hood-logo hood-logo--mark"
@@ -38,16 +45,36 @@ const lockupSrc = '/hoodfolio-logo.png';
 </template>
 
 <style scoped>
+.hood-logo-wrap {
+  display: block;
+  line-height: 0;
+}
+
 .hood-logo {
   display: block;
+  height: 100%;
   width: auto;
-  max-width: min(240px, 62vw);
+  max-width: 100%;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
+}
+
+.hood-logo--dark {
+  display: none;
 }
 
 .hood-logo--mark {
   color: var(--hf-green);
   width: auto;
+}
+</style>
+
+<style>
+html.dark .hood-logo-wrap .hood-logo--light {
+  display: none;
+}
+
+html.dark .hood-logo-wrap .hood-logo--dark {
+  display: block;
 }
 </style>

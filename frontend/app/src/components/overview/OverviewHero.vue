@@ -14,7 +14,7 @@ const wallet = useWalletStore();
   <section class="hero">
     <HoodLogo
       class="hero__logo"
-      height="48px"
+      height="80px"
     />
     <h1 class="hero__h">
       Non-custodial portfolio for
@@ -89,9 +89,10 @@ const wallet = useWalletStore();
 }
 
 .hero__logo {
-  margin: 0 auto 20px;
-  max-width: min(240px, 70vw);
-  object-position: center;
+  display: block;
+  width: fit-content;
+  max-width: min(420px, 85vw);
+  margin: 0 auto 24px;
 }
 
 .hero__h {
