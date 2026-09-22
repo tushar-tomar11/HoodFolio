@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import HfButton from '@/components/hf/HfButton.vue';
 import HoodLogo from '@/components/layout/HoodLogo.vue';
+import HoodTokenCa from '@/components/layout/HoodTokenCa.vue';
 import { HOOD_NAV, isNavActive } from '@/components/layout/nav-items';
 import ThemeToggle from '@/components/layout/ThemeToggle.vue';
 import WalletModal from '@/components/wallet/WalletModal.vue';
@@ -123,6 +124,7 @@ watch(() => route.path, closeMenu);
 
       <div class="hood-nav__right">
         <ThemeToggle />
+        <HoodTokenCa class="hood-nav__ca" />
         <template v-if="!wallet.isConnected">
           <span
             class="hood-nav__chain"
@@ -233,6 +235,7 @@ watch(() => route.path, closeMenu);
         >
           ×
         </button>
+        <HoodTokenCa compact />
         <template
           v-for="item in HOOD_NAV"
           :key="`m-${item.href}`"
@@ -397,6 +400,10 @@ a.hood-nav__link {
   cursor: help;
 }
 
+.hood-nav__ca {
+  display: none;
+}
+
 .hood-nav__wallet {
   flex-shrink: 0;
 }
@@ -522,7 +529,8 @@ a.hood-nav__link {
 @media (min-width: 1024px) {
   .hood-nav__links,
   .hood-nav__chain,
-  .hood-nav__chip {
+  .hood-nav__chip,
+  .hood-nav__ca {
     display: flex;
   }
 

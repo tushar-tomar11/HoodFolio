@@ -7,11 +7,13 @@ const {
   short = true,
   copyable = true,
   explorer = true,
+  explorerPath = 'address',
 } = defineProps<{
   address: string;
   short?: boolean;
   copyable?: boolean;
   explorer?: boolean;
+  explorerPath?: 'address' | 'token' | 'tx' | 'block';
 }>();
 
 const copied = ref(false);
@@ -22,7 +24,7 @@ const display = computed(() =>
   short ? truncateAddress(address) : address,
 );
 
-const href = computed(() => explorerUrl(address, 'address'));
+const href = computed(() => explorerUrl(address, explorerPath));
 
 async function copyAddress(): Promise<void> {
   try {
