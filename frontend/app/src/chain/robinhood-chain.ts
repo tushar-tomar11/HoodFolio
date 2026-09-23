@@ -8,7 +8,7 @@ export const ROBINHOOD_EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER ?? 'https:
 
 export const WETH_ADDRESS = '0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73' as const;
 
-export const HOODFOLIO_TOKEN_ADDRESS = '0xdA3Ac4FFC24484f1A4a883228A67Fc3a2124E85A' as const;
+export const HOODFOLIO_TOKEN_ADDRESS = '0xe437F2c23cDd117Dfed2aAB5B1582178E0Bf78da' as const;
 
 export const UNISWAP_HOME = 'https://app.uniswap.org/?chain=robinhood';
 
